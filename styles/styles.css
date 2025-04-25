@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'); 
+
+body {
+    font-family: 'Inter', Arial;
+}
+.contenedor_secundario {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0;
+    height: 100vh;
+    text-align: right;
+    padding-right: 10%;
+}
+
+.fondo_secundario {
+    background-color: #449DD1;
+}
+
+.letra_secundaria {
+    font-size: 3vw;
+    color: #F5FBFF;
+    font-weight: bold;
+}
+
+.letra_primaria {
+    color: #252C4F;
+    font-weight: bold;
+}
