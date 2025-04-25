@@ -3,27 +3,65 @@
 body {
     font-family: 'Inter', Arial;
 }
-.contenedor_secundario {
+
+h1 {
+    font-size: 3vw;
+    color: #252C4F;
+    font-weight: bold;
+}	
+
+h2 {
+    font-size: 2vw;
+    color: #252C4F;
+    font-weight: bold;
+}
+
+p {
+    font-size: 1vw;
+    color: #252C4F;
+    font-weight: bold;
+}
+
+.contenedor_secundario { /* A la derecha y centro */
     display: flex;
     align-items: center;
     justify-content: flex-end;
     margin: 0;
     height: 100vh;
     text-align: right;
-    padding-right: 10%;
+    padding-right: 5%;
 }
 
 .fondo_secundario {
     background-color: #449DD1;
 }
 
-.letra_secundaria {
+.letra_secundaria { /* Usar solo en vista de inicio y fin *//*Aunque creo que me gusta mas en 3vw como las otras*/
+    font-size: 4vw;
+    color: #F5FBFF;
+    font-weight: bold;
+}
+
+.letra_grande1 { /* Usar en forma de voto y voto en blanco, son como los h1 pero para usar varios (mas de un h1 son mala practica)*/
+    font-size: 3vw;
+    color: #252C4F;
+    font-weight: bold;
+}
+
+.letra_grande2 { /* Usar en botones*/
     font-size: 3vw;
     color: #F5FBFF;
     font-weight: bold;
 }
 
-.letra_primaria {
+.letra_chica1 { /* Usar en candidatos*/
+    font-size: 2vw;
     color: #252C4F;
+    font-weight: bold;
+}
+
+.letra_chica2 { /* Usar en botones*/
+    font-size: 2vw;
+    color: #F5FBFF;
     font-weight: bold;
 }
