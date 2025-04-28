@@ -13,13 +13,13 @@
     </div>
     <div class="contenedor_secundario">
         <h1>Ingrese su DNI:</h1>
-        <input type="text" placeholder="Ej: 12345678">
-        <div class="contenedor_btn_siguiente">
-            <a class="btn_siguiente" href="ingresar_dni.htm">Siguiente</a>
+        <input type="text" class="miInput" minlength="8" required placeholder="Ej: 12345678">  <!-- requiere un valor para ser valido (8 caracteres) -->
+        <div class="contenedor_btn_siguiente disabled">
+            <a class="btn_siguiente disabled" href="reconocimiento.html">Siguiente</a>
         </div>
     </div>
     <div class="contenedor_btn_como_votar2">
-        <a class="btn_como_votar2" href="#">¿Cómo votar? <i class="bi bi-question-circle-fill i_secundario"></i> </a>
+        <a class="btn_como_votar2" href="como_votar.html">¿Cómo votar? <i class="bi bi-question-circle-fill i_secundario"></i> </a>
     </div>
 </body>
 </html>
