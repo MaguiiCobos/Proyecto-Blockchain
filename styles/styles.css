@@ -277,3 +277,68 @@ input {
 .btn_siguiente2:hover{
     background-color: #1e2135;
 }
+
+/*Forma de voto*/
+.opciones-voto{
+    padding-top: 5%;
+}
+
+.tabla-forma-voto{
+    margin: 4% 5%;
+}
+
+.tabla-forma-voto .row{
+    margin-top: 5%;
+}
+
+
+
+.contenedor-votos{
+    background-color: white;
+    padding: 0.8vw 2vw;
+    border-radius: 5px;
+    text-align: center;   
+    position: relative; 
+
+}
+
+.btn-agrupacion-politica,
+.btn-categorias,
+.btn-blanco{
+    color: #252C4F;
+    text-decoration: none;
+    font-weight: 700;
+    background-color: white;
+   
+   
+}
+
+/*HTML de voto en blanco*/
+
+.opciones-voto .letra_chica1{
+    margin-left: 46%;
+}
+
+.tabla-fin-reinicio{
+    display: inline-flex;
+    margin-top: 15%;
+}
+
+.tabla-fin-reinicio .row{
+    margin-left: 150%;
+}
+
+.contenedor-opciones{
+    background-color: #252C4F;
+    padding: 0.8vw 2vw;
+    border-radius: 5px;
+    text-align: center;   
+    position: relative; 
+}
+
+.contenedor-opciones .btn-opcion{
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    
+}
