@@ -211,6 +211,53 @@ input {
     color: #3E4670;
 }
 
+/*RECONOCIMIENTO*/
+
+.contenedor_titulo{
+    margin-top: 1.5vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.img-rec{
+    position: relative;
+    margin-top: 1.5vw;
+    border-radius: 10px;
+    width: 70vw;
+}
+
+.contenedor_texto{
+    display: flex;
+    position: absolute;
+    justify-content: space-between;
+    width: 95vw;
+    margin: 2.5vw 1.5vw;
+    align-items: center;
+    bottom: 0;
+}
+
+.link_texto_validar{
+    text-decoration: none;
+}
+
+.texto_validar{
+    align-items:end;
+    font-size: 1.5vw;
+}
+
+.contenedor_btn_volver2 {
+    background-color: #252C4F;
+    padding: 0.8vw;
+    border-radius: 10px;
+    width: 3.3vw;
+}
+
+.btn_volver2 {
+    color: #F5FBFF;
+    text-decoration: none;
+}
+
 
 /*VOTACION*/
 
@@ -283,9 +330,9 @@ input {
 }
 
 .partido-info{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
     flex-grow: 1;
 }
 
@@ -313,13 +360,39 @@ input {
     width: 200px;
     margin: 30px 0 0 auto;
     display: flex;
-    align-items: center;    /* ➡️ AGREGADO */
-    justify-content: center; /* ➡️ AGREGADO */
+    align-items: center;    
+    justify-content: center; 
 }
 
 .btn_siguiente2:hover{
     background-color: #1e2135;
 }
+
+.contenedor_botones {
+    display: flex;
+    justify-content: center;
+    gap: 200px;
+    margin-top: 30px;
+}
+
+.btn_reiniciar,
+.btn_confirmar {
+    background-color: #2b2d42;
+    text-decoration: none;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn_reiniciar:hover,
+.btn_confirmar:hover {
+    background-color: #1e2135;
+}
+
 
 /*Forma de voto*/
 .opciones-voto{
