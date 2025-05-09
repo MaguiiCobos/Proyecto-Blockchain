@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Cómo votar?</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="contenedor_img">
+        <img class="img_primaria" src="image/escudo_nacional_argentino.png" alt="">
+    </div>
+    <div class="text_como_votar">
+        <h1 class="h1_como_votar">¿Cómo votar?</h1>
+        <div class="paso_como_votar">
+            <i class="bi bi-1-circle-fill"></i> 
+            <div>
+                <h2>Ingresá tu DNI </h2>
+                <p class="descripcion_como_votar">Escribí tu número de documento.</p>
+            </div>
+        </div>
+        <div class="paso_como_votar">
+            <i class="bi bi-2-circle-fill"></i> 
+            <div>
+                <h2>Reconocimiento facial </h2>
+                <p class="descripcion_como_votar">Mirá a la cámara para verificar tu identidad.</p>
+            </div>
+        </div>
+        <div class="paso_como_votar">
+            <i class="bi bi-3-circle-fill"></i> 
+            <div>
+                <h2>Elegí cómo querés votar </h2>
+            </div>
+        </div>
+        <div class="paso_como_votar">
+            <i class="bi bi-4-circle-fill"></i> 
+            <div>
+                <h2>Seleccioná tus candidatos </h2>
+            </div>
+        </div>
+        <div class="paso_como_votar">
+            <i class="bi bi-5-circle-fill"></i> 
+            <div>
+                <h2>Revisá tus votos </h2>
+                <p class="descripcion_como_votar">Si hay algún error, podés reiniciar y volver a votar.</p>
+            </div>
+        </div>
+        <div class="paso_como_votar">
+            <i class="bi bi-6-circle-fill"></i> 
+            <div>
+                <h2>Confirmación final </h2>
+                <p class="descripcion_como_votar">Si todo está bien, presioná "Confirmar".</p>
+            </div>
+        </div>
+        <div class="paso_como_votar">
+            <h2 class="h2_listo">¡Listo! Gracias por votar</h2>
+        </div>
+    </div>
+    <div class="contenedor_btn_volver">
+        <a class="btn_volver" href="ingresar_dni.html">Volver</a>
+    </div>
+</body>
+</html>
