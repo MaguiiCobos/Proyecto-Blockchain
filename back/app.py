@@ -1,3 +1,7 @@
+#comando para ejecutar (Magui :\ )
+#python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
+
+
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from web3 import Web3
