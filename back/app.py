@@ -111,6 +111,14 @@ def registrar_voto():
 def como_votar():
     return render_template('como_votar.html')
 
+@app.route('/fin_voto')
+def fin_voto():
+    return render_template('fin_voto.html')
+
+@app.route('/constancia')
+def constancia():
+    return render_template('constancia.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
 
