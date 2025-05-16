@@ -29,6 +29,8 @@ db_config = {
 
 # contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
+
+
 @app.route('/verificar_dni', methods=['GET', 'POST'])
 def verificar_dni():
     try:
@@ -118,6 +120,14 @@ def fin_voto():
 @app.route('/constancia')
 def constancia():
     return render_template('constancia.html')
+
+@app.route('/ingresar_dni')
+def ingresar_dni():
+    return render_template('ingresar_dni.html')
+
+@app.route('/reconocimiento')
+def reconocimiento():
+    return render_template('reconocimiento.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
