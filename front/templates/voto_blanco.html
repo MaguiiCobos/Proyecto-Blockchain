@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voto en Blanco</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="fondo_secundario">
@@ -32,7 +32,7 @@
         <div class="tabla-fin-reinicio">            
             <div class="row">
                 <div class="contenedor-opciones">
-                    <a href="forma_voto.html" class="btn-opcion">
+                    <a href="{{url_for('forma_voto')}}" class="btn-opcion">
                         Reiniciar               
                     </a>
                 </div>
@@ -40,7 +40,7 @@
 
             <div class="row">
                 <div class="contenedor-opciones">
-                    <a href="#" class="btn-opcion">
+                    <a href="{{ url_for('registrar_voto') }}" class="btn-opcion">
                         Confirmar               
                     </a>
                 </div>
