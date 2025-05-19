@@ -9,12 +9,12 @@
 </head>
 <body class="fondo_secundario">
     <div class="contenedor_img">
-        <img class="img_secundaria" src="image/escudo_nacional_argentino.png" alt="">
+        <img class="img_secundaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
     <div class="contenedor_secundario">
         <p class="letra_secundaria">¡Hola! <br><br>Iniciemos el proceso <br>de votación.</p>
         <div class="contenedor_btn_comenzar">
-            <a class="btn_comenzar" href="ingresar_dni.html">Comenzar</a>
+            <a class="btn_comenzar" href="{{ url_for('ingresar_dni') }}">Comenzar</a>
         </div>
     </div>
     <div class="contenedor_btn_como_votar">

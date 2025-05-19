@@ -107,9 +107,17 @@ def registrar_voto():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/ingresar_dni')
+def ingresar_dni():
+    return render_template('ingresar_dni.html')
+
 @app.route('/como_votar')
 def como_votar():
     return render_template('como_votar.html')
+
+@app.route('/reconocimiento')
+def reconocimiento():
+    return render_template('reconocimiento.html')
 
 @app.route('/fin_voto')
 def fin_voto():

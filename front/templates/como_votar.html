@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="contenedor_img">
-        <img class="img_primaria" src="image/escudo_nacional_argentino.png" alt="">
+        <img class="img_primaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
     <div class="text_como_votar">
         <h1 class="h1_como_votar">¿Cómo votar?</h1>
@@ -58,7 +58,7 @@
         </div>
     </div>
     <div class="contenedor_btn_volver">
-        <a class="btn_volver" href="ingresar_dni.html">Volver</a>
+        <a class="btn_volver" href="{{ url_for('index') }}">Volver</a>
     </div>
 </body>
 </html>
