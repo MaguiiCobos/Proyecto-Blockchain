@@ -117,10 +117,6 @@ def ingresar_dni():
 def como_votar():
     return render_template('como_votar.html')
 
-@app.route('/ingresar_dni')
-def ingresar_dni():
-    return render_template('ingresar_dni.html')
-
 @app.route('/fin_voto')
 def fin_voto():
     return render_template('fin_voto.html')
@@ -141,8 +137,8 @@ def voto_blanco():
 def tu_voto():
     return render_template('tu_voto.html')
 
-@app.route('/reconocimiento_facial')
-def reconocimiento_facial():
+@app.route('/reconocimiento')
+def reconocimiento():
     return render_template('reconocimiento.html')
 
 @app.route('/votacion')
