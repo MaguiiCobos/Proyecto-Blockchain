@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconocimiento</title>
-    <link rel="stylesheet" href="../static/styles/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <div class="contenedor_img">
-        <img class="img_primaria" src="../images/candidatos/escudo_nacional_argentino.png" alt="">
+        <img class="img_primaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
         
     </div>
 
     <div class="contenedor_titulo">
         <h1>Reconocimiento facial</h1>
-        <img class="img-rec" src="./image/imagen-reconocimiento.png" alt="imagen para el reconocimiento">
+        <!-- <img class="img-rec" src="./image/imagen-reconocimiento.png" alt="imagen para el reconocimiento"> -->
     </div>
 
     <div class="contenedor_texto" >
