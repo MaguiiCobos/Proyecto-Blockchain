@@ -1,27 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ingresar DNI</title>
-    <link rel="stylesheet" href="../static/styles/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="scripts/ingresar_dni.js" defer></script> <!-- Enlace al archivo JS externo -->
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+  </head>
+  <body>
     <div class="contenedor_img">
-        <img class="img_primaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
+      <img
+        class="img_primaria"
+        src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}"
+        alt=""
+      />
     </div>
     <div class="contenedor_secundario">
-        <h1>Ingrese su DNI:</h1>
-        <input type="text" class="miInput" minlength="8" id="dni" required placeholder="Ej: 12345678">
-        <div class="contenedor_btn_siguiente disabled">
-            <a class="btn_siguiente disabled" id="btn_dni" href="{{ url_for('reconocimiento') }}">Siguiente</a>
-        </div>
+      <h1>Ingrese su DNI:</h1>
+      <input
+        type="text"
+        class="miInput borde-verde borde-rojo"
+        minlength="8"
+        id="input_dni"
+        required
+        placeholder="Ej: 12345678"
+      />
+      <div class="contenedor_btn_siguiente">
+        <a
+          class="btn_siguiente disabled"
+          id="btn_dni"
+          href="{{ url_for('reconocimiento') }}"
+          >Siguiente</a
+        >
+      </div>
     </div>
     <div class="contenedor_btn_como_votar2">
-        <a class="btn_como_votar2" href="{{ url_for('como_votar') }}">¿Cómo votar? <i class="bi bi-question-circle-fill i_secundario"></i> </a>
-        <p id="resultado"></p>
+      <a class="btn_como_votar2" href="{{ url_for('como_votar') }}"
+        >¿Cómo votar? <i class="bi bi-question-circle-fill i_secundario"></i>
+      </a>
+      <p id="resultado"></p>
     </div>
-</body>
+
+    <script>
+      const inputDni = document.getElementById("input_dni");
+      const btnSiguiente = document.getElementById("btn_dni");
+
+      inputDni.addEventListener("input", async () => {
+        const dni = inputDni.value.trim();
+
+        // Validación simple: debe tener al menos 8 dígitos numéricos
+        if (dni.length < 8 || isNaN(dni)) {
+          setInputEstado("neutro");
+          return;
+        }
+
+        try {
+          const response = await fetch(`/verificar_dni?dni=${dni}`);
+          const data = await response.json();
+
+          if (data.existe) {
+            setInputEstado("valido");
+          } else {
+            setInputEstado("invalido");
+          }
+        } catch (error) {
+          console.error("Error al verificar el DNI:", error);
+          setInputEstado("neutro");
+        }
+      });
+
+      function setInputEstado(estado) {
+        // limpiar clases anteriores
+        inputDni.classList.remove("borde-verde", "borde-rojo");
+        btnSiguiente.classList.add("disabled");
+
+        if (estado === "valido") {
+          inputDni.classList.add("borde-verde");
+          btnSiguiente.classList.remove("disabled");
+        } else if (estado === "invalido") {
+          inputDni.classList.add("borde-rojo");
+        }
+      }
+    </script>
+  </body>
 </html>

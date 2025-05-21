@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forma de voto</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="fondo_secundario">
@@ -17,7 +17,7 @@
         <div class="tabla-forma-voto">
                 <div class="row">
                     <div class="contenedor-votos">
-                        <a href="votacion.html" class="btn-agrupacion-politica">
+                        <a href="{{url_for('votacion')}}" class="btn-agrupacion-politica">
                             Votar por Agrupación Política <br>
                             (boleta completa)
                     
@@ -36,7 +36,7 @@
 
             <div class="row">
                 <div class="contenedor-votos">
-                    <a href="voto_blanco.html" class="btn-blanco">
+                    <a href="{{ url_for('voto_blanco') }}" class="btn-blanco">
                         Voto en blanco
                     </a>
                 </div>

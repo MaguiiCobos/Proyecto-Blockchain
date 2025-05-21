@@ -172,9 +172,18 @@ input {
     font-size: larger;
 }
 
-.miInput:valid {
-    border: 2px solid green;
+.borde-verde {
+    border: 2px solid green !important;
 }
+
+.borde-rojo {
+    border: 2px solid red !important;
+}
+
+.disabled {
+    display: none;
+}
+
 
 /*COMO VOTAR*/
 

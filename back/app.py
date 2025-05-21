@@ -85,7 +85,7 @@ def test_conexion():
 @app.route('/registrar_voto', methods=['POST'])
 def registrar_voto():
     try:
-        data = request.get_json()
+        data = request.get_json() #json = JavaScript Objet Notation
         dni = data['dni']
         vote_choice = data['vote_choice']
 
@@ -109,9 +109,17 @@ def registrar_voto():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/ingresar_dni')
+def ingresar_dni():
+    return render_template('ingresar_dni.html')
+
 @app.route('/como_votar')
 def como_votar():
     return render_template('como_votar.html')
+
+@app.route('/ingresar_dni')
+def ingresar_dni():
+    return render_template('ingresar_dni.html')
 
 @app.route('/fin_voto')
 def fin_voto():
@@ -121,16 +129,27 @@ def fin_voto():
 def constancia():
     return render_template('constancia.html')
 
-@app.route('/ingresar_dni')
-def ingresar_dni():
-    return render_template('ingresar_dni.html')
+@app.route('/forma_voto')
+def forma_voto():
+    return render_template('forma_voto.html')
 
-@app.route('/reconocimiento')
-def reconocimiento():
+@app.route('/voto_blanco')
+def voto_blanco():
+    return render_template('voto_blanco.html')
+
+@app.route('/tu_voto')
+def tu_voto():
+    return render_template('tu_voto.html')
+
+@app.route('/reconocimiento_facial')
+def reconocimiento_facial():
     return render_template('reconocimiento.html')
+
+@app.route('/votacion')
+def votacion():
+    return render_template('votacion.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
-
-
