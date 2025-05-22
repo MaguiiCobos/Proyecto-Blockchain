@@ -377,6 +377,42 @@ input {
     background-color: #1e2135;
 }
 
+/*AGREGADO*/
+/* Oculta los inputs de tipo radio */
+.input-radio {
+    display: none;
+}
+
+/* Permite seleccionar el bloque completo al hacer clic */
+.partido-opcion {
+    display: block;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+/* Estilo base de la tarjeta */
+.tarjeta {
+    background-color: #d9e9f8;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* Estilo de tarjeta cuando está seleccionada */
+.input-radio:checked + .tarjeta {
+    background-color: white;
+    border: 3px solid #1a73e8;
+    box-shadow: 0 0 10px rgba(26, 115, 232, 0.3);
+}
+
+/* Efecto visual al pasar el mouse por encima */
+.tarjeta:hover {
+    transform: scale(1.01);
+}
+/*AGREGADO*/
+
 .contenedor_botones {
     display: flex;
     justify-content: center;
