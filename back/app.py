@@ -97,31 +97,31 @@ def test_conexion():
         return jsonify({"conexion": False, "mensaje": f"Error en la conexión: {str(e)}"}), 500
 
 @app.route('/registrar_voto', methods=['POST'])
-def registrar_voto():
-    try:
-        data = request.get_json() #json = JavaScript Objet Notation
-        dni = data['dni']
-        vote_choice = data['vote_choice']
+#def registrar_voto():
+   # try:
+    #     data = request.get_json() #json = JavaScript Objet Notation
+    #     dni = data['dni']
+    #     vote_choice = data['vote_choice']
 
-        # Dirección del remitente (debe tener ETH para pagar el gas)
-        sender_address = "0xYourWalletAddress"
-        private_key = "YourPrivateKey"
+    #     # Dirección del remitente (debe tener ETH para pagar el gas)
+    #     sender_address = "0xYourWalletAddress"
+    #     private_key = "YourPrivateKey"
 
-        # Construir la transacción
-        tx = contract.functions.registerVote(dni, vote_choice).buildTransaction({
-            'from': sender_address,
-            'nonce': web3.eth.getTransactionCount(sender_address),
-            'gas': 2000000,
-            'gasPrice': web3.toWei('50', 'gwei')
-        })
+    #     # Construir la transacción
+    #     tx = contract.functions.registerVote(dni, vote_choice).buildTransaction({
+    #         'from': sender_address,
+    #         'nonce': web3.eth.getTransactionCount(sender_address),
+    #         'gas': 2000000,
+    #         'gasPrice': web3.toWei('50', 'gwei')
+    #     })
 
-        # Firmar y enviar la transacción
-        signed_tx = web3.eth.account.signTransaction(tx, private_key)
-        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    #     # Firmar y enviar la transacción
+    #     signed_tx = web3.eth.account.signTransaction(tx, private_key)
+    #     tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-        return jsonify({"tx_hash": web3.toHex(tx_hash)})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    #     return jsonify({"tx_hash": web3.toHex(tx_hash)})
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @app.route('/ingresar_dni')
 def ingresar_dni():
