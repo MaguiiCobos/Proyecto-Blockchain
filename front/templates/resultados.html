@@ -6,15 +6,113 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <title>Constancia</title>
 </head>
-<body>
+<body class="fondo_secundario">
     <div class="contenedor_img">
-        <img class="img_primaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
+        <img class="img_secundaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
-    <div class="div">
-        <button>Finalizar Votacion</button>
-    </div>
-    <div class="div">
 
+
+    
+
+
+    <!-- Esto esta full hardcodeado luego hay que hacer cada resultados_partidos y todo lo que contiene con DOM -->
+
+
+
+
+
+
+
+    <div class="contenedor_pagina_finalizar_votacion">
+        <div class="contenedor_resultados">
+            <h1 class="letra_grande1">Resultados de la votación</h1>
+            <div class="partido-elegido">
+                <div class="resultados_partido border_bottom">
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Lista</p>
+                        <p class="titulo">307</p>
+                        <p><strong>Cambio</strong></p>
+                    </div>
+                    <div class="seccion_partido al_frente ganador">
+                        <p class="titulo">Presidente</p>
+                        <p><strong>García, Marta</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Gobernador</p>
+                        <p><strong>Lopez, Camila</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Intendente</p>
+                        <p><strong>Lopez, Camila</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                </div>
+                <div class="resultados_partido border_bottom">
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Lista</p>
+                        <p class="titulo">307</p>
+                        <p><strong>Cambio</strong></p>
+                    </div>
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Presidente</p>
+                        <p><strong>García, Marta</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                    <div class="seccion_partido al_frente ganador">
+                        <p class="titulo">Gobernador</p>
+                        <p><strong>Lopez, Camila</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Intendente</p>
+                        <p><strong>Lopez, Camila</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                </div>
+                <div class="resultados_partido ">
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Lista</p>
+                        <p class="titulo">307</p>
+                        <p><strong>Cambio</strong></p>
+                    </div>
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Presidente</p>
+                        <p><strong>García, Marta</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                    <div class="seccion_partido al_frente">
+                        <p class="titulo">Gobernador</p>
+                        <p><strong>Lopez, Camila</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                    <div class="seccion_partido al_frente ganador">
+                        <p class="titulo">Intendente</p>
+                        <p><strong>Lopez, Camila</strong></p>
+                        <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
+                        <p><strong>VOTOS TOTALES:</strong></p>
+                        <p>(10%) 1123421</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -159,6 +159,10 @@ def reconocimiento():
 def votacion():
     return render_template('votacion.html')
 
+@app.route('/finalizar_votacion')
+def finalizar_votacion():
+    return render_template('finalizar_votacion.html')
+
 @app.route('/resultados')
 def resultados():
     return render_template('resultados.html')
