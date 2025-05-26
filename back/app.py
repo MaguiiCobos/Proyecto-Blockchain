@@ -49,18 +49,18 @@ def verificar_dni():
             data = request.get_json()
             dni = data.get('dni')  # Para solicitudes POST
 
-        # Conectar a la base de datos
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
+#         # Conectar a la base de datos
+#         conn = mysql.connector.connect(**db_config)
+#         cursor = conn.cursor()
 
-        # Consultar si el DNI existe
-        query = "SELECT COUNT(*) FROM votantes WHERE dni = %s"
-        cursor.execute(query, (dni,))
-        resultado = cursor.fetchone()
+#         # Consultar si el DNI existe
+#         query = "SELECT COUNT(*) FROM votantes WHERE dni = %s"
+#         cursor.execute(query, (dni,))
+#         resultado = cursor.fetchone()
 
-        # Cerrar la conexión
-        cursor.close()
-        conn.close()
+#         # Cerrar la conexión
+#         cursor.close()
+#         conn.close()
 
         # Verificar si el DNI existe
         if resultado[0] > 0:
