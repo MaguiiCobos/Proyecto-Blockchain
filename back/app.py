@@ -73,6 +73,15 @@ def verificar_dni():
             return jsonify({"existe": True, "mensaje": "DNI encontrado"})
         else:
             return jsonify({"existe": False, "mensaje": "DNI no encontrado"})
+
+        # Si se encontró el DNI
+        ha_votado = resultado[0]
+        return jsonify({
+            "existe": True,
+            "ha_votado": ha_votado,
+            "mensaje": "DNI encontrado"
+        })
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
