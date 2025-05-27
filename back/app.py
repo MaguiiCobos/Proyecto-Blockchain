@@ -15,6 +15,7 @@ load_dotenv()
 
 # Cargar la clave secreta desde el archivo .env
 app_secret_key = os.getenv('FLASK_SECRET_KEY')
+app.secret_key = app_secret_key
 
 # Configuración de la conexión a MariaDB
 db_config = {
@@ -49,18 +50,18 @@ def verificar_dni():
             data = request.get_json()
             dni = data.get('dni')  # Para solicitudes POST
 
-#         # Conectar a la base de datos
-#         conn = mysql.connector.connect(**db_config)
-#         cursor = conn.cursor()
+        # Conectar a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
 
-#         # Consultar si el DNI existe
-#         query = "SELECT COUNT(*) FROM votantes WHERE dni = %s"
-#         cursor.execute(query, (dni,))
-#         resultado = cursor.fetchone()
+        # Consultar si el DNI existe
+        query = "SELECT COUNT(*) FROM votantes WHERE dni = %s"
+        cursor.execute(query, (dni,))
+        resultado = cursor.fetchone()
 
-#         # Cerrar la conexión
-#         cursor.close()
-#         conn.close()
+        # Cerrar la conexión
+        cursor.close()
+        conn.close()
 
         # Verificar si el DNI existe
         if resultado[0] > 0:
@@ -177,6 +178,11 @@ def resultados():
     return render_template('resultados.html')
 
 
+# @app.route('/ver_sesion')
+# def ver_sesion():
+#     if 'voto_actual' in session:
+#         return jsonify({"sesion": session['voto_actual']})
+#     return jsonify({"error": "No hay sesión activa"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
