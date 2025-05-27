@@ -438,8 +438,76 @@ input {
     background-color: #1e2135;
 }
 
+/*VOTACION CANDIDATO*/
 
-/*Forma de voto*/
+.tab-content {
+  display: none;
+}
+
+#presidente:target,
+#gobernador:target,
+#intendente:target {
+  display: block;
+}
+
+body:not(:has(:target)) #presidente {
+  display: block;
+}
+
+body {
+  margin: 0;
+  background-color: #449DD1;
+}
+
+.tabs {
+  display: flex;
+  background-color: #1B4468;
+  border-bottom: 3px solid #000;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 15px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  background-color: #1B4468;
+  transition: background 0.3s;
+  border-right: 1px solid #000;
+}
+
+.tab:hover {
+  background-color: #256fa1;
+}
+
+.tab:target,
+.tab:focus,
+.tab.active {
+  background-color: white;
+  color: #1B4468;
+  border-bottom: 3px solid white;
+}
+
+/* Contenedor de contenido de pestañas */
+.contenido-tabs {
+  padding: 20px;
+}
+
+.tab-content {
+  display: none;
+}
+
+#presidente:target,
+#gobernador:target,
+#intendente:target {
+  display: block;
+}
+
+.input-radio {
+  display: none;
+}
+
 .opciones-voto{
     padding-top: 5%;
 }
@@ -473,6 +541,79 @@ input {
    
    
 }
+
+.contenedor-botones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.botones-derecha {
+  display: flex;
+  gap: 10px;
+}
+
+/* Botón de siguiente */
+.btn_siguiente{
+  background-color: #1B1B3A;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  display: inline-block;
+  border-radius: 6px;
+  margin-top: 20px;
+  text-decoration: none;
+}
+
+.btn_siguiente:hover {
+  background-color: #14142d;
+}
+
+/* Botón anterior */
+.btn_anterior{
+  background-color: #1B1B3A;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  display: inline-block;
+  border-radius: 6px;
+  margin-top: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn_anterior:hover {
+  background-color: #14142d;
+}
+
+/* Botón voto en blanco */
+.btn_blanco {
+  background-color: white;
+  color: #1B1B3A;
+  border: 2px solid #1B1B3A;
+  padding: 10px 20px;
+  text-align: center;
+  display: inline-block;
+  border-radius: 6px;
+  margin-top: 20px;
+  margin-left: -20px;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.voto-blanco-opcion {
+  display: inline-block;
+}
+
+/* Estilo cuando está seleccionado el voto en blanco */
+.voto-blanco-opcion input[type="radio"]:checked + .btn_blanco {
+  background-color: #1B1B3A;
+  color: white;
+  border: 2px solid #1B1B3A;
+}
+
 
 /*HTML de voto en blanco*/
 

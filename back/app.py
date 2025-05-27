@@ -3,7 +3,7 @@
 
 
 from flask import Flask, request, jsonify, render_template, session
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 import mysql.connector
 from web3 import Web3
@@ -11,7 +11,7 @@ from web3 import Web3
 app = Flask(__name__, template_folder="../front/templates", static_folder="../front/static")
 
 # Cargar variables de entorno desde el archivo .env
-load_dotenv()
+#load_dotenv()
 
 # Cargar la clave secreta desde el archivo .env
 app_secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -98,30 +98,30 @@ def test_conexion():
 
 @app.route('/registrar_voto', methods=['POST'])
 #def registrar_voto():
-   # try:
-    #     data = request.get_json() #json = JavaScript Objet Notation
-    #     dni = data['dni']
-    #     vote_choice = data['vote_choice']
+    #try:
+    #    data = request.get_json() #json = JavaScript Objet Notation
+    #    dni = data['dni']
+    #    vote_choice = data['vote_choice']
+    #
+    #    # Dirección del remitente (debe tener ETH para pagar el gas)
+    #    sender_address = "0xYourWalletAddress"
+    #    private_key = "YourPrivateKey"
 
-    #     # Dirección del remitente (debe tener ETH para pagar el gas)
-    #     sender_address = "0xYourWalletAddress"
-    #     private_key = "YourPrivateKey"
+        # Construir la transacción
+    #    tx = contract.functions.registerVote(dni, vote_choice).buildTransaction({
+    #        'from': sender_address,
+    #        'nonce': web3.eth.getTransactionCount(sender_address),
+    #        'gas': 2000000,
+    #        'gasPrice': web3.toWei('50', 'gwei')
+    #    })
 
-    #     # Construir la transacción
-    #     tx = contract.functions.registerVote(dni, vote_choice).buildTransaction({
-    #         'from': sender_address,
-    #         'nonce': web3.eth.getTransactionCount(sender_address),
-    #         'gas': 2000000,
-    #         'gasPrice': web3.toWei('50', 'gwei')
-    #     })
+        # Firmar y enviar la transacción
+    #    signed_tx = web3.eth.account.signTransaction(tx, private_key)
+    #    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-    #     # Firmar y enviar la transacción
-    #     signed_tx = web3.eth.account.signTransaction(tx, private_key)
-    #     tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-
-    #     return jsonify({"tx_hash": web3.toHex(tx_hash)})
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
+    #    return jsonify({"tx_hash": web3.toHex(tx_hash)})
+    #except Exception as e:
+    #    return jsonify({"error": str(e)}), 500
 
 @app.route('/ingresar_dni')
 def ingresar_dni():
@@ -163,7 +163,9 @@ def votacion():
 def resultados():
     return render_template('resultados.html')
 
-
+@app.route('/votacion_cat')
+def votacion_cat():
+    return render_template('votacion_cat.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
