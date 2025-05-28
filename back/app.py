@@ -45,17 +45,17 @@ def verificar_dni():
     try:
         # Obtener el DNI desde la solicitud
         if request.method == 'GET':
-            dni = request.args.get('dni')  # Para solicitudes GET
+            dni = request.args.get('dni')
         elif request.method == 'POST':
             data = request.get_json()
-            dni = data.get('dni')  # Para solicitudes POST
+            dni = data.get('dni')
 
         # Conectar a la base de datos
         conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
-        # Consultar si el DNI existe
-        query = "SELECT COUNT(*) FROM votantes WHERE dni = %s"
+        # Consultar si el votante existe y obtener si ya votó
+        query = "SELECT ha_votado FROM votantes WHERE dni = %s"
         cursor.execute(query, (dni,))
         resultado = cursor.fetchone()
 
@@ -63,29 +63,25 @@ def verificar_dni():
         cursor.close()
         conn.close()
 
-        # Verificar si el DNI existe
-        if resultado[0] > 0:
-            session['voto_actual'] = {
-                'dni': dni,
-                'presidente': 0,
-                'gobernador': 0,
-                'intendente': 0
-            }
-            return jsonify({"existe": True, "mensaje": "DNI encontrado"})
+        # Evaluar resultados
+        if resultado:
+            if resultado['ha_votado'] == 0:
+                session['voto_actual'] = {
+                    'dni': dni,
+                    'presidente': 0,
+                    'gobernador': 0,
+                    'intendente': 0
+                }
+                return jsonify({"existe": True, "habilitado": True, "mensaje": "DNI válido. Puede votar."})
+            else:
+                return jsonify({"existe": True, "habilitado": False, "mensaje": "Este votante ya ha votado."})
         else:
-            return jsonify({"existe": False, "mensaje": "DNI no encontrado"})
-
-        # Si se encontró el DNI
-        ha_votado = resultado[0]
-        return jsonify({
-            "existe": True,
-            "ha_votado": ha_votado,
-            "mensaje": "DNI encontrado"
-        })
+            return jsonify({"existe": False, "habilitado": False, "mensaje": "DNI no encontrado."})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 
 @app.route('/')
 def index():
@@ -177,18 +173,16 @@ def finalizar_votacion():
 def resultados():
     return render_template('resultados.html')
 
-<<<<<<< HEAD
 @app.route('/votacion_cat')
 def votacion_cat():
     return render_template('votacion_cat.html')
-=======
+
 
 # @app.route('/ver_sesion')
 # def ver_sesion():
 #     if 'voto_actual' in session:
 #         return jsonify({"sesion": session['voto_actual']})
 #     return jsonify({"error": "No hay sesión activa"}), 404
->>>>>>> ae717ba74bc8a1f0d38b35eae0b7e0211955d265
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
