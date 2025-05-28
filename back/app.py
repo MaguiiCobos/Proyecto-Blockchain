@@ -2,19 +2,27 @@
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session
+from dotenv import load_dotenv
+import os
 import mysql.connector
 from web3 import Web3
 
 app = Flask(__name__, template_folder="../front/templates", static_folder="../front/static")
 
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
+
+# Cargar la clave secreta desde el archivo .env
+app_secret_key = os.getenv('FLASK_SECRET_KEY')
+
 # Configuración de la conexión a MariaDB
 db_config = {
-    'host': 'localhost',       # Cambia esto si tu base de datos está en otro servidor
-    'user': 'root',      # Usuario de MariaDB
-    'password': '',  # Contraseña de MariaDB
-    'database': 'blockchain',        # Nombre de la base de datos
-    'port': 3306  # Cambia este valor si usas un puerto diferente
+    'host': os.getenv('DB_HOST'),       # Cambia esto si tu base de datos está en otro servidor
+    'user': os.getenv('DB_USER'),       # Usuario de MariaDB
+    'password': os.getenv('DB_PASSWORD'),  # Contraseña de MariaDB
+    'database': os.getenv('DB_NAME'),        # Nombre de la base de datos
+    'port': os.getenv('DB_PORT')  # Cambia este valor si usas un puerto diferente
 }
 
 # # Conexión a la red Ethereum (puedes usar Infura o Alchemy)
@@ -56,12 +64,18 @@ def verificar_dni():
 
         # Verificar si el DNI existe
         if resultado[0] > 0:
+            # session['voto_actual'] = {
+            #     'dni': dni,
+            #     'presidente': 0,
+            #     'gobernador': 0,
+            #     'intendente': 0
+            # }
             return jsonify({"existe": True, "mensaje": "DNI encontrado"})
         else:
             return jsonify({"existe": False, "mensaje": "DNI no encontrado"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 
 @app.route('/')
 def index():
@@ -83,31 +97,31 @@ def test_conexion():
         return jsonify({"conexion": False, "mensaje": f"Error en la conexión: {str(e)}"}), 500
 
 @app.route('/registrar_voto', methods=['POST'])
-def registrar_voto():
-    try:
-        data = request.get_json() #json = JavaScript Objet Notation
-        dni = data['dni']
-        vote_choice = data['vote_choice']
+#def registrar_voto():
+   # try:
+    #     data = request.get_json() #json = JavaScript Objet Notation
+    #     dni = data['dni']
+    #     vote_choice = data['vote_choice']
 
-        # Dirección del remitente (debe tener ETH para pagar el gas)
-        sender_address = "0xYourWalletAddress"
-        private_key = "YourPrivateKey"
+    #     # Dirección del remitente (debe tener ETH para pagar el gas)
+    #     sender_address = "0xYourWalletAddress"
+    #     private_key = "YourPrivateKey"
 
-        # Construir la transacción
-        tx = contract.functions.registerVote(dni, vote_choice).buildTransaction({
-            'from': sender_address,
-            'nonce': web3.eth.getTransactionCount(sender_address),
-            'gas': 2000000,
-            'gasPrice': web3.toWei('50', 'gwei')
-        })
+    #     # Construir la transacción
+    #     tx = contract.functions.registerVote(dni, vote_choice).buildTransaction({
+    #         'from': sender_address,
+    #         'nonce': web3.eth.getTransactionCount(sender_address),
+    #         'gas': 2000000,
+    #         'gasPrice': web3.toWei('50', 'gwei')
+    #     })
 
-        # Firmar y enviar la transacción
-        signed_tx = web3.eth.account.signTransaction(tx, private_key)
-        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    #     # Firmar y enviar la transacción
+    #     signed_tx = web3.eth.account.signTransaction(tx, private_key)
+    #     tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-        return jsonify({"tx_hash": web3.toHex(tx_hash)})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    #     return jsonify({"tx_hash": web3.toHex(tx_hash)})
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @app.route('/ingresar_dni')
 def ingresar_dni():
@@ -144,6 +158,14 @@ def reconocimiento():
 @app.route('/votacion')
 def votacion():
     return render_template('votacion.html')
+
+@app.route('/finalizar_votacion')
+def finalizar_votacion():
+    return render_template('finalizar_votacion.html')
+
+@app.route('/resultados')
+def resultados():
+    return render_template('resultados.html')
 
 
 
