@@ -1,0 +1,105 @@
+# ===============================
+# Node/JavaScript/Frontend
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+.vite/
+coverage/
+*.log
+
+# React/Vite/etc.
+.env
+.env.local
+.env.*.local
+*.local.js
+
+# ===============================
+# Python / Flask / Backend
+# ===============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+.tox/
+.coverage
+.cache/
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# Flask specific
+instance/
+.webassets-cache/
+
+# Virtualenvs
+venv/
+env/
+.venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ===============================
+# Solidity / Smart Contracts
+# ===============================
+artifacts/
+cache/
+typechain/
+coverage.json
+gas-report.json
+*.dbg.json
+*.tsbuildinfo
+
+# Truffle / Hardhat / Foundry
+build/
+*.sol.js
+*.abi.json
+
+# ===============================
+# Database files
+# ===============================
+*.sqlite3
+*.db
+*.sql
+*.sql.gz
+*.sql.zip
+dump.sql
+*.mwb
+*.tar
+*.tgz
+
+# ===============================
+# OS / Misc
+# ===============================
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*.tmp
+*.old
+*.orig
+*.rej
+
+# ===============================
+# Git
+# ===============================
+.git/
+.gitignore
