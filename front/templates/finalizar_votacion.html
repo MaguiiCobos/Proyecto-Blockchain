@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <title>Constancia</title>
+</head>
+<body>
+    <div class="contenedor_img">
+        <img class="img_primaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
+    </div>
+    <div class="contenedor_pagina_finalizar_votacion">
+        <div class="contenedor_btn_finalizar_votacion">
+            <a class="btn_finalizar_votacion" href= "{{ url_for('resultados') }}">Finalizar Votacion</a>
+        </div>
+    </div>
+</body>
+</html>

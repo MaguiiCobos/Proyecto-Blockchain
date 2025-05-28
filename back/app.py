@@ -15,6 +15,7 @@ app = Flask(__name__, template_folder="../front/templates", static_folder="../fr
 
 # Cargar la clave secreta desde el archivo .env
 app_secret_key = os.getenv('FLASK_SECRET_KEY')
+app.secret_key = app_secret_key
 
 # Configuración de la conexión a MariaDB
 db_config = {
@@ -73,6 +74,15 @@ def verificar_dni():
             return jsonify({"existe": True, "mensaje": "DNI encontrado"})
         else:
             return jsonify({"existe": False, "mensaje": "DNI no encontrado"})
+
+        # Si se encontró el DNI
+        ha_votado = resultado[0]
+        return jsonify({
+            "existe": True,
+            "ha_votado": ha_votado,
+            "mensaje": "DNI encontrado"
+        })
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
@@ -159,13 +169,26 @@ def reconocimiento():
 def votacion():
     return render_template('votacion.html')
 
+@app.route('/finalizar_votacion')
+def finalizar_votacion():
+    return render_template('finalizar_votacion.html')
+
 @app.route('/resultados')
 def resultados():
     return render_template('resultados.html')
 
+<<<<<<< HEAD
 @app.route('/votacion_cat')
 def votacion_cat():
     return render_template('votacion_cat.html')
+=======
+
+# @app.route('/ver_sesion')
+# def ver_sesion():
+#     if 'voto_actual' in session:
+#         return jsonify({"sesion": session['voto_actual']})
+#     return jsonify({"error": "No hay sesión activa"}), 404
+>>>>>>> ae717ba74bc8a1f0d38b35eae0b7e0211955d265
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
