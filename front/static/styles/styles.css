@@ -597,7 +597,7 @@ body:not(:has(:target)) #presidente {
   padding: 10px 20px;
   text-align: center;
   display: inline-block;
-  border-radius: 6px;
+  border-radius: 10px;
   margin-top: 20px;
   text-decoration: none;
   font-weight: bold;
@@ -611,11 +611,11 @@ body:not(:has(:target)) #presidente {
 .btn_blanco {
   background-color: white;
   color: #1B1B3A;
-  border: 2px solid #1B1B3A;
+  /* border: 2px solid #1B1B3A; */
   padding: 10px 20px;
   text-align: center;
   display: inline-block;
-  border-radius: 6px;
+  border-radius: 10px;
   margin-top: 20px;
   margin-left: -20px;
   text-decoration: none;

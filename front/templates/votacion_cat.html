@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 
-<body>
+<body class="fondo_secundario">
     <div class="tabs">
     <a href="#presidente" class="tab">Presidente y vice</a>
     <a href="#gobernador" class="tab">Gobernador y vice</a>
@@ -110,7 +110,7 @@
             </label>
 
             <div class="botones-derecha">
-                <a href="#gobernador" class="btn_siguiente">Siguiente categoría</a>
+                <a href="#gobernador" class="btn_anterior">Siguiente categoría</a>
             </div>
         </div>
         
@@ -210,7 +210,7 @@
 
             <div class="botones-derecha">
                 <a href="#presidente" class="btn_anterior">Categoria anterior</a>
-                <a href="#intendente" class="btn_siguiente">Siguiente categoría</a>
+                <a href="#intendente" class="btn_anterior">Siguiente categoría</a>
             </div>
         </div>
 
@@ -297,7 +297,7 @@
 
             <div class="botones-derecha">
                 <a href="#gobernador" class="btn_anterior">Categoría anterior</a>
-                <a href="{{url_for('tu_voto')}}" class="btn_siguiente">Finalizar votación</a>
+                <a href="{{url_for('tu_voto')}}" class="btn_anterior">Finalizar votación</a>
             </div>
         </div>
         
