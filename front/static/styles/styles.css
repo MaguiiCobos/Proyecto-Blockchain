@@ -479,11 +479,6 @@ body:not(:has(:target)) #presidente {
   display: block;
 }
 
-body {
-  margin: 0;
-  background-color: #449DD1;
-}
-
 .tabs {
   display: flex;
   background-color: #1B4468;
@@ -578,22 +573,22 @@ body {
   display: flex;
   gap: 10px;
 }
-
-/* Botón de siguiente */
+/* 
+/* Botón de siguiente
 .btn_siguiente{
-  background-color: #1B1B3A;
+   background-color: #1B1B3A; 
   color: white;
   padding: 10px 20px;
   text-align: center;
   display: inline-block;
-  border-radius: 6px;
-  margin-top: 20px;
+  border-radius: 10px;
+   margin-top: 20px; 
   text-decoration: none;
-}
+} */
 
-.btn_siguiente:hover {
+/* .btn_siguiente:hover {
   background-color: #14142d;
-}
+} */
 
 /* Botón anterior */
 .btn_anterior{
