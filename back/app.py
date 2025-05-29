@@ -1,29 +1,44 @@
 #comando para ejecutar (Magui :\ )
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
+#comando para ejecutar el reconocimiento facial
+#C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
+
 
 from flask import Flask, request, jsonify, render_template, session
 from dotenv import load_dotenv
 import os
+import sys
 import mysql.connector
 from web3 import Web3
+import subprocess
+
+import tkinter as tk
+from tkinter import messagebox
+
+# from reconocer_usuario import capturar_y_reconocer
+#from supabase import create_client
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from db_config import db_config  # Importás el diccionario
 
 app = Flask(__name__, template_folder="../front/templates", static_folder="../front/static")
 
 # Cargar variables de entorno desde el archivo .env
-load_dotenv()
+# load_dotenv()
 
 # Cargar la clave secreta desde el archivo .env
 app_secret_key = os.getenv('FLASK_SECRET_KEY')
 
 # Configuración de la conexión a MariaDB
-db_config = {
-    'host': os.getenv('DB_HOST'),       # Cambia esto si tu base de datos está en otro servidor
-    'user': os.getenv('DB_USER'),       # Usuario de MariaDB
-    'password': os.getenv('DB_PASSWORD'),  # Contraseña de MariaDB
-    'database': os.getenv('DB_NAME'),        # Nombre de la base de datos
-    'port': os.getenv('DB_PORT')  # Cambia este valor si usas un puerto diferente
-}
+# db_config = {
+#     'host': os.getenv('DB_HOST'),       # Cambia esto si tu base de datos está en otro servidor
+#     'user': os.getenv('DB_USER'),       # Usuario de MariaDB
+#     'password': os.getenv('DB_PASSWORD'),  # Contraseña de MariaDB
+#     'database': os.getenv('DB_NAME'),        # Nombre de la base de datos
+#     'port': os.getenv('DB_PORT')  # Cambia este valor si usas un puerto diferente
+# }
 
 # # Conexión a la red Ethereum (puedes usar Infura o Alchemy)
 # infura_url = "https://goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID"
@@ -39,15 +54,15 @@ db_config = {
 
 
 
-@app.route('/verificar_dni', methods=['GET', 'POST'])
-def verificar_dni():
-    try:
-        # Obtener el DNI desde la solicitud
-        if request.method == 'GET':
-            dni = request.args.get('dni')  # Para solicitudes GET
-        elif request.method == 'POST':
-            data = request.get_json()
-            dni = data.get('dni')  # Para solicitudes POST
+# @app.route('/verificar_dni', methods=['GET', 'POST'])
+# def verificar_dni():
+#     try:
+#         # Obtener el DNI desde la solicitud
+#         if request.method == 'GET':
+#             dni = request.args.get('dni')  # Para solicitudes GET
+#         elif request.method == 'POST':
+#             data = request.get_json()
+#             dni = data.get('dni')  # Para solicitudes POST
 
 #         # Conectar a la base de datos
 #         conn = mysql.connector.connect(**db_config)
@@ -62,29 +77,93 @@ def verificar_dni():
 #         cursor.close()
 #         conn.close()
 
+#         # Verificar si el DNI existe
+#         if resultado[0] > 0:
+#             # session['voto_actual'] = {
+#             #     'dni': dni,
+#             #     'presidente': 0,
+#             #     'gobernador': 0,
+#             #     'intendente': 0
+#             # }
+#             return jsonify({"existe": True, "mensaje": "DNI encontrado"})
+#         else:
+#             return jsonify({"existe": False, "mensaje": "DNI no encontrado"})
+
+#         # Si se encontró el DNI
+#         ha_votado = resultado[0]
+#         return jsonify({
+#             "existe": True,
+#             "ha_votado": ha_votado,
+#             "mensaje": "DNI encontrado"
+#         })
+
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+
+
+
+
+@app.route('/reconocer', methods=['GET'])
+def reconocer_usuario():
+    try:
+        result = subprocess.run(["python", "reconocer_usuario.py"], check=True, capture_output=True, text=True)
+        return jsonify({"estado": "ok", "mensaje": "Reconocimiento ejecutado", "salida": result.stdout})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"estado": "error", "mensaje": str(e), "salida": e.stderr}), 500
+    except Exception as e:
+        return jsonify({"estado": "error", "mensaje": str(e)}), 500
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/verificar_dni', methods=['GET', 'POST'])
+def verificar_dni():
+    try:
+        # Obtener el DNI desde la solicitud
+        if request.method == 'GET':
+            dni = request.args.get('dni')  # Para solicitudes GET
+        elif request.method == 'POST':
+            data = request.get_json()
+            dni = data.get('dni')  # Para solicitudes POST
+
+        # Conectar a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Consultar si el DNI existe
+        query = "SELECT COUNT(*) FROM votantes WHERE dni = %s"
+        cursor.execute(query, (dni,))
+        resultado = cursor.fetchone()
+
+        # Cerrar la conexión
+        cursor.close()
+        conn.close()
+
         # Verificar si el DNI existe
         if resultado[0] > 0:
-            session['voto_actual'] = {
-                'dni': dni,
-                'presidente': 0,
-                'gobernador': 0,
-                'intendente': 0
-            }
+            # session['voto_actual'] = {
+            #     'dni': dni,
+            #     'presidente': 0,
+            #     'gobernador': 0,
+            #     'intendente': 0
+            # }
             return jsonify({"existe": True, "mensaje": "DNI encontrado"})
         else:
             return jsonify({"existe": False, "mensaje": "DNI no encontrado"})
-
-        # Si se encontró el DNI
-        ha_votado = resultado[0]
-        return jsonify({
-            "existe": True,
-            "ha_votado": ha_votado,
-            "mensaje": "DNI encontrado"
-        })
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
+
 
 @app.route('/')
 def index():
