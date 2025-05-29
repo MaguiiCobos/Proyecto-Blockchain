@@ -3,6 +3,7 @@
 
 #comando para ejecutar el reconocimiento facial
 #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
+# python back/reconocer_usuario.py
 
 
 from flask import Flask, request, jsonify, render_template, session

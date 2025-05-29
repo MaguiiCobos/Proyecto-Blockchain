@@ -97,8 +97,8 @@ def validar_imagenes():
 lista_inscriptos_codificada = codificar(imagenes_votantes)
 
 # Mensaje de bienvenida
-messagebox.showinfo("Registro de Asistencia", "Bienvenid@ al sistema de registro de asistencias de evento")
-opcion = messagebox.askyesno("Registro", "¿Desea ingresar al evento?")
+messagebox.showinfo("Registro de voto", "Bienvenid@ al sistema de Votacion Electronico")
+opcion = messagebox.askyesno("Registro", "¿Desea ingresar al Sistema de Votacion?")
 
 if opcion:  # Si el usuario hace clic en "Sí"
     messagebox.showinfo("Validación", "Abriendo la cámara para capturar tu imagen")
