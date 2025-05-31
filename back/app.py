@@ -17,6 +17,7 @@ import subprocess
 import tkinter as tk
 from tkinter import messagebox
 
+
 # from reconocer_usuario import capturar_y_reconocer
 #from supabase import create_client
 

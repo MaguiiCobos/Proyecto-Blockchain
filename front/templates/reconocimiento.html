@@ -51,6 +51,56 @@
                 });
         });
     </script>
+
+    <div class="contenedor_camara">
+    <video id="video" width="700" height="400" autoplay></video>
+    <button class="btn_capturar"
+    id="capturar">Capturar</button>
+    <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+</div>
+
+<script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const capturarBtn = document.getElementById("capturar");
+
+    // Solicita acceso a la cámara
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            console.error("No se pudo acceder a la cámara: ", err);
+        });
+
+    capturarBtn.addEventListener("click", () => {
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convierte a base64
+        const imagenBase64 = canvas.toDataURL("image/jpeg");
+
+        // Envía al servidor
+        fetch("/reconocer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ imagen: imagenBase64 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.estado === "ok") {
+                window.location.href = "/forma_voto";
+            } else {
+                alert("Error: " + data.mensaje);
+            }
+        })
+        .catch(error => console.error("Error al enviar imagen:", error));
+    });
+</script>
+
+
 </body>
 
 </html>

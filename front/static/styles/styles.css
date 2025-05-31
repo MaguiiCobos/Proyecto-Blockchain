@@ -292,7 +292,23 @@ input {
     text-decoration: none;
 }
 
+.contenedor_camara {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px;
+}
 
+#capturar{
+    margin-top: 30px;
+}
+
+.btn_capturar {
+    position: absolute;
+    background-color: #252C4F;
+    padding: 0.8vw;
+    border-radius: 10px;
+}
 /*VOTACION*/
 
 .fondo_votacion{
