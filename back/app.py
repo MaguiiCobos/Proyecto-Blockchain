@@ -173,7 +173,50 @@ def voto_blanco():
 
 @app.route('/tu_voto')
 def tu_voto():
-    return render_template('tu_voto.html')
+    # Conectar a la base de datos
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    candidatos = []
+
+    # Obetener el presidente, gobernador e intendente del votante actual
+    if 'voto_actual' in session :
+        presidente = session['voto_actual']['presidente']
+        gobernador = session['voto_actual']['gobernador']
+        intendente = session['voto_actual']['intendente']
+
+         # Diccionario para guardar IDs válidos de candidatos
+        ids_candidatos = []
+
+        # Función auxiliar para obtener ID si no es voto en blanco
+        def obtener_id_candidato(query, id_partido, columna):
+            if id_partido == 0:
+                return None  # Voto en blanco
+            cursor.execute(query, (id_partido,))
+            resultado = cursor.fetchone()
+            return resultado[columna] if resultado else None
+
+        # Obtener IDs solo si no es voto en blanco
+        id_presidente = obtener_id_candidato("SELECT id_presidente FROM partidos WHERE id_partidos = %s", presidente, 'id_presidente')
+        id_gobernador = obtener_id_candidato("SELECT id_gobernador FROM partidos WHERE id_partidos = %s", gobernador, 'id_gobernador')
+        id_intendente = obtener_id_candidato("SELECT id_intendente FROM partidos WHERE id_partidos = %s", intendente, 'id_intendente')
+
+        # Crear lista con IDs válidos (no None)
+        for id_c in [id_presidente, id_gobernador, id_intendente]:
+            if id_c is not None:
+                ids_candidatos.append(id_c)
+
+        # Si hay algún candidato para consultar
+        if ids_candidatos:
+            query = f"SELECT * FROM candidatos WHERE id_candidato IN ({','.join(['%s'] * len(ids_candidatos))})"
+            cursor.execute(query, ids_candidatos)
+            candidatos = cursor.fetchall()
+
+        # Cerrar la conexión
+        cursor.close()
+        conn.close()
+
+    return render_template('tu_voto.html', candidatos=candidatos)
 
 @app.route('/reconocimiento')
 def reconocimiento():
@@ -195,6 +238,14 @@ def resultados():
 def votacion_cat():
     return render_template('votacion_cat.html')
 
+# @app.route('/set_voto_test')
+# def set_voto_test():
+#     session['voto_actual'] = {
+#         'presidente': 1,  # ID válido de partido
+#         'gobernador': 0,  # voto en blanco
+#         'intendente': 2   # otro ID de partido válido
+#     }
+#     return "Voto de prueba seteado en la sesión."
 
 # @app.route('/ver_sesion')
 # def ver_sesion():

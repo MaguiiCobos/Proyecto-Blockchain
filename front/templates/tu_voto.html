@@ -9,6 +9,19 @@
 </head>
 
 <body class="fondo_votacion">
+<!-- <div>
+    pruebas bd
+    <h2>Tu voto</h2>
+
+{% if candidatos %}
+    {% for c in candidatos %}
+        <p><strong>{{ c.cargo|capitalize }}</strong>: {{ c.nombre }}</p>
+    {% endfor %}
+{% else %}
+    <p>No votaste por ningún candidato. Todos fueron voto en blanco.</p>
+{% endif %}
+</div> -->
+
     <div class="contenedor_img_2">
         <img class="img_secundaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
