@@ -10,39 +10,35 @@
 <body class="fondo_secundario">
 
     <div class="contenedor_img">
-        <img class="img_secundaria" src="image/escudo_nacional_argentino.png" alt="">
+        <img class="img_secundaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
-
-    <section class="opciones-voto">
-        <div class="tabla-forma-voto">
-                <div class="row">
-                    <div class="contenedor-votos">
-                        <a href="{{url_for('votacion')}}" class="btn-agrupacion-politica">
-                            Votar por Agrupación Política <br>
-                            (boleta completa)
-                    
-                        </a>
-                    </div>
-                </div>
-
-            <div class="row">
-                <div class="contenedor-votos">
-                    <a href="#" class="btn-categorias">
-                        Votar por categorias <br>
-                        (corte de boleta)
-                    </a>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="contenedor-votos">
-                    <a href="{{ url_for('voto_blanco') }}" class="btn-blanco">
-                        Voto en blanco
-                    </a>
-                </div>
+    <div class="contenedor_partidos with_cards">
+        <h1>Forma de Voto</h1>
+        <div class="partido">
+            <div class="contenedor_camara">
+                <a href="{{ url_for('votacion') }}">
+                    <p><strong>Votar por Agrupación Política </strong></p>
+                    <p>(Boleta Completa)</p>
+                </a>
             </div>
         </div>
-    </section>
-    
+
+        <div class="partido">
+            <div class="contenedor_camara">
+                <a href="{{ url_for('votacion_cat') }}">
+                    <p><strong>Votar por Categorías</strong></p>
+                    <p>(Corte de Boleta)</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="partido">
+            <div class="contenedor_camara">
+                <a href="{{ url_for('tu_voto') }}">
+                    <p><strong>Voto en Blanco</strong></p>
+                    <p>(No se selecciona ningún candidato)</p>
+                </a>
+            </div>
+        </div>    
 </body>
 </html>
