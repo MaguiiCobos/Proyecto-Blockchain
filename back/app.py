@@ -177,46 +177,82 @@ def tu_voto():
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor(dictionary=True)
 
-    candidatos = []
+    votos = {
+        'presidente': None,
+        'gobernador': None,
+        'intendente': None
+    }
 
-    # Obetener el presidente, gobernador e intendente del votante actual
-    if 'voto_actual' in session :
+    # Obtener el presidente, gobernador e intendente del votante actual
+    if 'voto_actual' in session:
         presidente = session['voto_actual']['presidente']
         gobernador = session['voto_actual']['gobernador']
         intendente = session['voto_actual']['intendente']
 
-         # Diccionario para guardar IDs válidos de candidatos
-        ids_candidatos = []
-
-        # Función auxiliar para obtener ID si no es voto en blanco
-        def obtener_id_candidato(query, id_partido, columna):
+        # Función auxiliar para obtener información del partido y candidato
+        def obtener_info_voto(id_partido, cargo):
             if id_partido == 0:
-                return None  # Voto en blanco
-            cursor.execute(query, (id_partido,))
+                return {'es_blanco': True}
+            
+            # Obtener información del partido y candidato
+            query = """
+                SELECT 
+                    p.nombre as nombre_partido,
+                    p.lista as lista,
+                    p.foto_presidentes as foto_presidente,
+                    p.foto_gobernadores as foto_gobernador,
+                    p.foto_intendente as foto_intendente,
+                    c.nombre,
+                    c.apellido,
+                    vc.nombre as nombre_vice,
+                    vc.apellido as apellido_vice
+                FROM partidos p
+                LEFT JOIN candidatos c ON 
+                    CASE 
+                        WHEN %s = 'presidente' THEN p.id_presidente = c.id_candidato
+                        WHEN %s = 'gobernador' THEN p.id_gobernador = c.id_candidato
+                        WHEN %s = 'intendente' THEN p.id_intendente = c.id_candidato
+                    END
+                LEFT JOIN candidatos vc ON
+                    CASE 
+                        WHEN %s = 'presidente' THEN p.id_vice_presidente = vc.id_candidato
+                        WHEN %s = 'gobernador' THEN p.id_vice_gobernador = vc.id_candidato
+                        WHEN %s = 'intendente' THEN NULL
+                    END
+                WHERE p.id_partidos = %s
+            """
+            cursor.execute(query, (cargo, cargo, cargo, cargo, cargo, cargo, id_partido))
             resultado = cursor.fetchone()
-            return resultado[columna] if resultado else None
+            
+            if resultado:
+                foto = None
+                if cargo == 'presidente':
+                    foto = resultado['foto_presidente']
+                elif cargo == 'gobernador':
+                    foto = resultado['foto_gobernador']
+                elif cargo == 'intendente':
+                    foto = resultado['foto_intendente']
 
-        # Obtener IDs solo si no es voto en blanco
-        id_presidente = obtener_id_candidato("SELECT id_presidente FROM partidos WHERE id_partidos = %s", presidente, 'id_presidente')
-        id_gobernador = obtener_id_candidato("SELECT id_gobernador FROM partidos WHERE id_partidos = %s", gobernador, 'id_gobernador')
-        id_intendente = obtener_id_candidato("SELECT id_intendente FROM partidos WHERE id_partidos = %s", intendente, 'id_intendente')
+                return {
+                    'es_blanco': False,
+                    'partido': resultado['nombre_partido'],
+                    'lista': resultado['lista'],
+                    'candidato': f"{resultado['apellido']}, {resultado['nombre']}",
+                    'vice': f"{resultado['apellido_vice']}, {resultado['nombre_vice']}" if resultado['nombre_vice'] else None,
+                    'imagen': foto
+                }
+            return {'es_blanco': True}
 
-        # Crear lista con IDs válidos (no None)
-        for id_c in [id_presidente, id_gobernador, id_intendente]:
-            if id_c is not None:
-                ids_candidatos.append(id_c)
+        # Obtener información para cada cargo
+        votos['presidente'] = obtener_info_voto(presidente, 'presidente')
+        votos['gobernador'] = obtener_info_voto(gobernador, 'gobernador')
+        votos['intendente'] = obtener_info_voto(intendente, 'intendente')
 
-        # Si hay algún candidato para consultar
-        if ids_candidatos:
-            query = f"SELECT * FROM candidatos WHERE id_candidato IN ({','.join(['%s'] * len(ids_candidatos))})"
-            cursor.execute(query, ids_candidatos)
-            candidatos = cursor.fetchall()
+    # Cerrar la conexión
+    cursor.close()
+    conn.close()
 
-        # Cerrar la conexión
-        cursor.close()
-        conn.close()
-
-    return render_template('tu_voto.html', candidatos=candidatos)
+    return render_template('tu_voto.html', votos=votos)
 
 @app.route('/reconocimiento')
 def reconocimiento():
@@ -238,20 +274,20 @@ def resultados():
 def votacion_cat():
     return render_template('votacion_cat.html')
 
-# @app.route('/set_voto_test')
-# def set_voto_test():
-#     session['voto_actual'] = {
-#         'presidente': 1,  # ID válido de partido
-#         'gobernador': 0,  # voto en blanco
-#         'intendente': 2   # otro ID de partido válido
-#     }
-#     return "Voto de prueba seteado en la sesión."
+@app.route('/set_voto_test')
+def set_voto_test():
+    session['voto_actual'] = {
+        'presidente': 1,  # ID válido de partido
+        'gobernador': 0,  # voto en blanco
+        'intendente': 2   # otro ID de partido válido
+    }
+    return "Voto de prueba seteado en la sesión."
 
-# @app.route('/ver_sesion')
-# def ver_sesion():
-#     if 'voto_actual' in session:
-#         return jsonify({"sesion": session['voto_actual']})
-#     return jsonify({"error": "No hay sesión activa"}), 404
+@app.route('/ver_sesion')
+def ver_sesion():
+    if 'voto_actual' in session:
+        return jsonify({"sesion": session['voto_actual']})
+    return jsonify({"error": "No hay sesión activa"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

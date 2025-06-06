@@ -1,102 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Votar por Agrupación Política</title>
+    <title>Tu Voto</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body class="fondo_secundario">
-<!-- <div>
-    pruebas bd
-    <h2>Tu voto</h2>
-
-{% if candidatos %}
-    {% for c in candidatos %}
-        <p><strong>{{ c.cargo|capitalize }}</strong>: {{ c.nombre }}</p>
-    {% endfor %}
-{% else %}
-    <p>No votaste por ningún candidato. Todos fueron voto en blanco.</p>
-{% endif %}
-</div> -->
-
     <div class="contenedor_img">
-        <img class="img_secundaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
+        <img class="img_secundaria"
+            src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
     <div class="contenedor_partidos with_cards">
         <h1>Tu Voto</h1>
-        <div class="partido">
-            <div class="partido-encabezado">
-                <img src="../image/Cambio.png" alt="cambio">
-                <div class="partido-info">
-                    <div class="seccion">
-                        <p class="titulo">Partido</p>
-                        <p class="titulo">CAMBIO</p>
-                    </div>
-                    <div class="seccion">
-                        <p class="titulo">Lista</p>
-                        <p class="titulo">307</p>
-                    </div>
-                    <div class="seccion">
-                        <p class="titulo">Presidente</p>
-                        <p><strong>García, Marta</strong></p>
-                    </div>
-                    <div class="seccion">
-                        <p class="titulo">Vicepresidente</p>
-                        <p><strong>Lopez, Camila</strong></p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
+        {% for cargo, voto in votos.items() %}
         <div class="partido">
             <div class="partido-encabezado">
-                <img src="./image/Cambio_Gober.png" alt="valor">
+                {% if not voto.es_blanco %}
+                <img src="{{ url_for('static', filename='images/candidatos/' + voto.imagen) }}"
+                    alt="{{ voto.partido }}">
+                {% else %}
+                <!-- <img src="{{ url_for('static', filename='images/candidatos/voto_blanco.png') }}" alt="Voto en blanco"> -->
+                {% endif %}
                 <div class="partido-info">
                     <div class="seccion">
-                        <p class="titulo">Partido</p>
-                        <p class="titulo">CAMBIO</p>
+                        {% if not voto.es_blanco %}
+                        <p class="subtitulo">Partido</p>
+                        <p class="titulo">{{ voto.partido }}</p>
+                        {% else %}
+                        <p class="titulo">Voto en Blanco</p>
+                        {% endif %}
                     </div>
                     <div class="seccion">
-                        <p class="titulo">Lista</p>
-                        <p class="titulo">307</p>
+                        {% if not voto.es_blanco %}
+                        <p class="subtitulo">Lista</p>
+                        <p class="titulo">{{ voto.lista }}</p>
+                        {% else %}
+                        <p class="titulo">Voto en Blanco</p>
+                        {% endif %}
                     </div>
                     <div class="seccion">
-                        <p class="titulo">Gobernador</p>
-                        <p><strong>Hernandez, Luz</strong></p>
-                    </div>
-                    <div class="seccion">
-                        <p class="titulo">Vicegobernador</p>
-                        <p><strong>Cruz, Abigail</strong></p>
+                        {% if not voto.es_blanco %}
+                        <p class="subtitulo">{{ cargo|capitalize }}</p>
+                        <p class="titulo">{{ voto.candidato }}</p>
+                        {% if voto.vice %}
+                        <p class="subtitulo">Vice{{ cargo|capitalize }}</p>
+                        <p class="titulo">{{ voto.vice }}</p>
+                        {% endif %}
+                        {% else %}
+                        <p class="titulo">Voto en Blanco</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="partido">
-            <div class="partido-encabezado">
-                <img src="./image/Cambio_Inten.png" alt="unidos">
-                <div class="partido-info">
-                    <div class="seccion">
-                        <p class="titulo">Partido</p>
-                        <p class="titulo">CAMBIO</p>
-                    </div>
-                    <div class="seccion">
-                        <p class="titulo">Lista</p>
-                        <p class="titulo">307</p>
-                    </div>
-                    <div class="seccion">
-                        <p class="titulo">Intendente</p>
-                        <p><strong>Ramirez, Agustin</strong></p>
-                    </div>
-                    <div class="seccion">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
 
         <div class="contenedor_botones">
             <a class="btn_reiniciar" href="{{url_for('forma_voto')}}">Reiniciar</a>
@@ -104,4 +66,5 @@
         </div>
     </div>
 </body>
+
 </html>

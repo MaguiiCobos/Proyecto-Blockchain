@@ -373,13 +373,20 @@ input {
     display: flex;
     flex-direction: column;
     margin: 25px 20px;
+    height: 6vw;
 }
 
 .titulo {
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 1vw;
 }
+
+.subtitulo {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 0.2vw;
+}  
 
 .btn_siguiente2 {
     background-color: #2b2d42;
