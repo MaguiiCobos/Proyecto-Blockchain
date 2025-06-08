@@ -737,3 +737,24 @@ body:not(:has(:target)) #presidente {
     border-radius: 10px;
     padding: 0.5vw;
 }
+
+.contenedor_btn_descargar {
+    margin-top: 11vw;
+    background-color: #252C4F;
+    padding: 0.8vw 2vw;
+    border-radius: 0.5vw;
+    text-align: center;
+    position: absolute;
+}
+
+.btn_descargar {
+    color: #F5FBFF;
+    text-decoration: none;
+    font-size: 1.1vw;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.bi-file-earmark-arrow-down-fill{
+    font-size: 1.5vw;
+}

@@ -6,7 +6,7 @@
 # python back/reconocer_usuario.py
 
 
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 #from dotenv import load_dotenv
 import os
 import sys
@@ -17,6 +17,13 @@ import subprocess
 import tkinter as tk
 from tkinter import messagebox
 
+# Configuración para generar PDFs
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from datetime import datetime
 
 # from reconocer_usuario import capturar_y_reconocer
 #from supabase import create_client
@@ -161,7 +168,77 @@ def fin_voto():
 
 @app.route('/constancia')
 def constancia():
-    return render_template('constancia.html')
+    try:
+        # Verificar que la sesión existe y tiene los datos necesarios
+        if 'voto_actual' not in session:
+            return redirect(url_for('index'))
+        
+        # Verificar que todos los campos necesarios estén presentes
+        required_fields = ['dni', 'presidente', 'gobernador', 'intendente']
+        for field in required_fields:
+            if field not in session['voto_actual']:
+                session['voto_actual'][field] = 0  # Valor por defecto si falta algún campo
+        
+        # Obtener datos del votante
+        dni = session['voto_actual']['dni']
+        
+        # Crear directorio para constancias si no existe
+        constancias_dir = os.path.join('front', 'static', 'constancias')
+        if not os.path.exists(constancias_dir):
+            os.makedirs(constancias_dir)
+        
+        # Generar nombre único para el PDF
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        pdf_filename = f'constancia_voto_{dni}_{timestamp}.pdf'
+        pdf_path = os.path.join(constancias_dir, pdf_filename)
+        
+        # Crear el PDF
+        doc = SimpleDocTemplate(pdf_path, pagesize=letter)
+        styles = getSampleStyleSheet()
+        story = []
+        
+        # Estilo personalizado para el título
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            spaceAfter=30,
+            alignment=1  # Centrado
+        )
+        
+        # Estilo para el contenido
+        content_style = ParagraphStyle(
+            'CustomContent',
+            parent=styles['Normal'],
+            fontSize=12,
+            spaceAfter=12
+        )
+        
+        # Agregar contenido al PDF
+        story.append(Paragraph("CONSTANCIA DE VOTO", title_style))
+        story.append(Spacer(1, 20))
+        
+        # Información del votante
+        story.append(Paragraph(f"DNI del votante: {dni}", content_style))
+        story.append(Paragraph(f"Fecha y hora de emisión: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", content_style))
+        story.append(Spacer(1, 20))
+        
+        # Información de los votos
+        votos = session['voto_actual']
+        for cargo in ['presidente', 'gobernador', 'intendente']:
+                story.append(Paragraph(f"{cargo.capitalize()}: Voto registrado", content_style))
+        
+        # Construir el PDF
+        doc.build(story)
+        
+        # Guardar la ruta del PDF en la sesión para referencia
+        session['constancia_pdf'] = pdf_filename
+        
+        return render_template('constancia.html')
+        
+    except Exception as e:
+        print(f"Error al generar constancia: {str(e)}")
+        return redirect(url_for('index'))
 
 @app.route('/forma_voto')
 def forma_voto():
