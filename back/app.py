@@ -1,12 +1,12 @@
 #comando para ejecutar (Magui :\ )
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
-#comando para ejecutar el reconocimiento facial
+#comando para ejecutar el reconocimiento facia
 #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
 # python back/reconocer_usuario.py
 
 
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template, session, redirect
 #from dotenv import load_dotenv
 import os
 import sys
@@ -222,9 +222,9 @@ def tu_voto():
 def reconocimiento():
     return render_template('reconocimiento.html')
 
-@app.route('/votacion')
+@app.route('/votacion_comp')
 def votacion():
-    return render_template('votacion.html')
+    return render_template('votacion_comp.html')
 
 @app.route('/finalizar_votacion')
 def finalizar_votacion():
@@ -237,6 +237,61 @@ def resultados():
 @app.route('/votacion_cat')
 def votacion_cat():
     return render_template('votacion_cat.html')
+
+@app.route('/guardar_voto', methods=['POST'])
+def guardar_voto():
+    # Obtener los votos del formulario
+    voto_presidente = request.form.get('voto_presidente')
+    voto_gobernador = request.form.get('voto_gobernador')
+    voto_intendente = request.form.get('voto_intendente')
+
+    # Si el usuario no tiene sesión activa, redirigir
+    if 'voto_actual' not in session:
+        return "Sesión no encontrada. Por favor, vuelva a ingresar su DNI.", 400
+
+    # Mapear los valores a IDs de partido (ajusta según tu lógica)
+    def partido_a_id(valor):
+        if valor == "CAMBIO":
+            return 1
+        elif valor == "VALOR":
+            return 2
+        elif valor == "UNIDOS":
+            return 3
+        elif valor == "BLANCO":
+            return 0
+        return None
+
+    id_presidente = partido_a_id(voto_presidente)
+    id_gobernador = partido_a_id(voto_gobernador)
+    id_intendente = partido_a_id(voto_intendente)
+
+    # Actualizar la sesión
+    session['voto_actual']['presidente'] = id_presidente
+    session['voto_actual']['gobernador'] = id_gobernador
+    session['voto_actual']['intendente'] = id_intendente
+
+    # Guardar en la base de datos
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Actualizar la tabla de votantes para marcar que ya votó
+        dni = session['voto_actual']['dni']
+        cursor.execute("UPDATE votantes SET ha_votado = 1 WHERE dni = %s", (dni,))
+
+        # Insertar el voto en la tabla de votos (ajusta el nombre de la tabla y columnas según tu modelo)
+        cursor.execute(
+            "INSERT INTO votos (dni, id_partido_presidente, id_partido_gobernador, id_partido_intendente) VALUES (%s, %s, %s, %s)",
+            (dni, id_presidente, id_gobernador, id_intendente)
+        )
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        return f"Error al guardar el voto: {str(e)}", 500
+
+    return redirect('/tu_voto')
 
 # @app.route('/set_voto_test')
 # def set_voto_test():
