@@ -305,7 +305,7 @@ def resultados():
 def votacion_cat():
     return render_template('votacion_cat.html')
 
-<<<<<<< HEAD
+
 @app.route('/guardar_voto', methods=['POST'])
 def guardar_voto():
     # Obtener los votos del formulario
@@ -369,7 +369,7 @@ def guardar_voto():
 #         'intendente': 2   # otro ID de partido válido
 #     }
 #     return "Voto de prueba seteado en la sesión."
-=======
+
 @app.route('/set_voto_test')
 def set_voto_test():
     session['voto_actual'] = {
@@ -378,7 +378,7 @@ def set_voto_test():
         'intendente': 2   # otro ID de partido válido
     }
     return "Voto de prueba seteado en la sesión."
->>>>>>> f18e0bd0759e2f809ace0315d9bb37602c5545fd
+
 
 @app.route('/ver_sesion')
 def ver_sesion():
