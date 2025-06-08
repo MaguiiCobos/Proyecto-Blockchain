@@ -1,12 +1,21 @@
 #comando para ejecutar (Magui :\ )
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
+<<<<<<< HEAD
 #comando para ejecutar el reconocimiento facia
 #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
 # python back/reconocer_usuario.py
 
 
 from flask import Flask, request, jsonify, render_template, session, redirect
+=======
+#comando para ejecutar el reconocimiento facial
+# C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
+# python back/reconocer_usuario.py
+
+
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+>>>>>>> f18e0bd0759e2f809ace0315d9bb37602c5545fd
 #from dotenv import load_dotenv
 import os
 import sys
@@ -17,15 +26,28 @@ import subprocess
 import tkinter as tk
 from tkinter import messagebox
 
+# Configuración para generar PDFs
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from datetime import datetime
 
 # from reconocer_usuario import capturar_y_reconocer
 #from supabase import create_client
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from db_config import db_config  # Importás el diccionario
+from db_config import db_config
 
-app = Flask(__name__, template_folder="../front/templates", static_folder="../front/static")
+app = Flask(__name__, 
+    template_folder="../front/templates",
+    static_folder="../front/static"
+)
+
+# Clave secreta para las sesiones
+app.secret_key = 'clave_secreta_temporal'
 
 # Cargar variables de entorno desde el archivo .env
 #load_dotenv()
@@ -60,42 +82,60 @@ app.secret_key = app_secret_key
 @app.route('/verificar_dni', methods=['GET', 'POST'])
 def verificar_dni():
     try:
-        # Obtener el DNI desde la solicitud
         if request.method == 'GET':
             dni = request.args.get('dni')
         elif request.method == 'POST':
             data = request.get_json()
             dni = data.get('dni')
+        
+        print(f"Verificando DNI: {dni}")
+
+        if not dni:
+            return jsonify({"existe": False, "habilitado": False, "mensaje": "DNI no proporcionado"}), 400
 
         # Conectar a la base de datos
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
 
-        # Consultar si el votante existe y obtener si ya votó
-        query = "SELECT ha_votado FROM votantes WHERE dni = %s"
+        # Verificar si el DNI existe y obtener datos del votante
+        query = "SELECT dni, nombre, apellido, ha_votado FROM votantes WHERE dni = %s"
         cursor.execute(query, (dni,))
-        resultado = cursor.fetchone()
+        votante = cursor.fetchone()
 
-        # Cerrar la conexión
         cursor.close()
         conn.close()
 
-        # Evaluar resultados
-        if resultado:
-            if resultado['ha_votado'] == 0:
+        if votante:
+            if votante['ha_votado'] == 0:
+                # Guardar datos del votante en la sesión
                 session['voto_actual'] = {
                     'dni': dni,
+                    'nombre': f"{votante['nombre']} {votante['apellido']}",
                     'presidente': 0,
                     'gobernador': 0,
                     'intendente': 0
                 }
-                return jsonify({"existe": True, "habilitado": True, "mensaje": "DNI válido. Puede votar."})
+                print(f"Sesión creada para votante: {session['voto_actual']}")
+                return jsonify({
+                    "existe": True, 
+                    "habilitado": True, 
+                    "mensaje": "DNI válido. Puede proceder con el reconocimiento facial."
+                })
             else:
-                return jsonify({"existe": True, "habilitado": False, "mensaje": "Este votante ya ha votado."})
+                return jsonify({
+                    "existe": True, 
+                    "habilitado": False, 
+                    "mensaje": "Este votante ya ha votado."
+                })
         else:
-            return jsonify({"existe": False, "habilitado": False, "mensaje": "DNI no encontrado."})
+            return jsonify({
+                "existe": False, 
+                "habilitado": False, 
+                "mensaje": "DNI no encontrado en el padrón electoral."
+            })
 
     except Exception as e:
+        print(f"Error en verificar_dni: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -161,7 +201,77 @@ def fin_voto():
 
 @app.route('/constancia')
 def constancia():
-    return render_template('constancia.html')
+    try:
+        # Verificar que la sesión existe y tiene los datos necesarios
+        if 'voto_actual' not in session:
+            return redirect(url_for('index'))
+        
+        # Verificar que todos los campos necesarios estén presentes
+        required_fields = ['dni', 'presidente', 'gobernador', 'intendente']
+        for field in required_fields:
+            if field not in session['voto_actual']:
+                session['voto_actual'][field] = 0  # Valor por defecto si falta algún campo
+        
+        # Obtener datos del votante
+        dni = session['voto_actual']['dni']
+        
+        # Crear directorio para constancias si no existe
+        constancias_dir = os.path.join('front', 'static', 'constancias')
+        if not os.path.exists(constancias_dir):
+            os.makedirs(constancias_dir)
+        
+        # Generar nombre único para el PDF
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        pdf_filename = f'constancia_voto_{dni}_{timestamp}.pdf'
+        pdf_path = os.path.join(constancias_dir, pdf_filename)
+        
+        # Crear el PDF
+        doc = SimpleDocTemplate(pdf_path, pagesize=letter)
+        styles = getSampleStyleSheet()
+        story = []
+        
+        # Estilo personalizado para el título
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            spaceAfter=30,
+            alignment=1  # Centrado
+        )
+        
+        # Estilo para el contenido
+        content_style = ParagraphStyle(
+            'CustomContent',
+            parent=styles['Normal'],
+            fontSize=12,
+            spaceAfter=12
+        )
+        
+        # Agregar contenido al PDF
+        story.append(Paragraph("CONSTANCIA DE VOTO", title_style))
+        story.append(Spacer(1, 20))
+        
+        # Información del votante
+        story.append(Paragraph(f"DNI del votante: {dni}", content_style))
+        story.append(Paragraph(f"Fecha y hora de emisión: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", content_style))
+        story.append(Spacer(1, 20))
+        
+        # Información de los votos
+        votos = session['voto_actual']
+        for cargo in ['presidente', 'gobernador', 'intendente']:
+                story.append(Paragraph(f"{cargo.capitalize()}: Voto registrado", content_style))
+        
+        # Construir el PDF
+        doc.build(story)
+        
+        # Guardar la ruta del PDF en la sesión para referencia
+        session['constancia_pdf'] = pdf_filename
+        
+        return render_template('constancia.html')
+        
+    except Exception as e:
+        print(f"Error al generar constancia: {str(e)}")
+        return redirect(url_for('index'))
 
 @app.route('/forma_voto')
 def forma_voto():
@@ -173,50 +283,7 @@ def voto_blanco():
 
 @app.route('/tu_voto')
 def tu_voto():
-    # Conectar a la base de datos
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor(dictionary=True)
-
-    candidatos = []
-
-    # Obetener el presidente, gobernador e intendente del votante actual
-    if 'voto_actual' in session :
-        presidente = session['voto_actual']['presidente']
-        gobernador = session['voto_actual']['gobernador']
-        intendente = session['voto_actual']['intendente']
-
-         # Diccionario para guardar IDs válidos de candidatos
-        ids_candidatos = []
-
-        # Función auxiliar para obtener ID si no es voto en blanco
-        def obtener_id_candidato(query, id_partido, columna):
-            if id_partido == 0:
-                return None  # Voto en blanco
-            cursor.execute(query, (id_partido,))
-            resultado = cursor.fetchone()
-            return resultado[columna] if resultado else None
-
-        # Obtener IDs solo si no es voto en blanco
-        id_presidente = obtener_id_candidato("SELECT id_presidente FROM partidos WHERE id_partidos = %s", presidente, 'id_presidente')
-        id_gobernador = obtener_id_candidato("SELECT id_gobernador FROM partidos WHERE id_partidos = %s", gobernador, 'id_gobernador')
-        id_intendente = obtener_id_candidato("SELECT id_intendente FROM partidos WHERE id_partidos = %s", intendente, 'id_intendente')
-
-        # Crear lista con IDs válidos (no None)
-        for id_c in [id_presidente, id_gobernador, id_intendente]:
-            if id_c is not None:
-                ids_candidatos.append(id_c)
-
-        # Si hay algún candidato para consultar
-        if ids_candidatos:
-            query = f"SELECT * FROM candidatos WHERE id_candidato IN ({','.join(['%s'] * len(ids_candidatos))})"
-            cursor.execute(query, ids_candidatos)
-            candidatos = cursor.fetchall()
-
-        # Cerrar la conexión
-        cursor.close()
-        conn.close()
-
-    return render_template('tu_voto.html', candidatos=candidatos)
+    return render_template('tu_voto.html')
 
 @app.route('/reconocimiento')
 def reconocimiento():
@@ -238,6 +305,7 @@ def resultados():
 def votacion_cat():
     return render_template('votacion_cat.html')
 
+<<<<<<< HEAD
 @app.route('/guardar_voto', methods=['POST'])
 def guardar_voto():
     # Obtener los votos del formulario
@@ -301,12 +369,95 @@ def guardar_voto():
 #         'intendente': 2   # otro ID de partido válido
 #     }
 #     return "Voto de prueba seteado en la sesión."
+=======
+@app.route('/set_voto_test')
+def set_voto_test():
+    session['voto_actual'] = {
+        'presidente': 1,  # ID válido de partido
+        'gobernador': 0,  # voto en blanco
+        'intendente': 2   # otro ID de partido válido
+    }
+    return "Voto de prueba seteado en la sesión."
+>>>>>>> f18e0bd0759e2f809ace0315d9bb37602c5545fd
 
-# @app.route('/ver_sesion')
-# def ver_sesion():
-#     if 'voto_actual' in session:
-#         return jsonify({"sesion": session['voto_actual']})
-#     return jsonify({"error": "No hay sesión activa"}), 404
+@app.route('/ver_sesion')
+def ver_sesion():
+    if 'voto_actual' in session:
+        return jsonify({"sesion": session['voto_actual']})
+    return jsonify({"error": "No hay sesión activa"}), 404
+
+@app.route('/reconocer', methods=['POST'])
+def reconocer():
+    try:
+        # Verificar que haya una sesión activa
+        if 'voto_actual' not in session:
+            return jsonify({
+                "success": False, 
+                "error": "No hay sesión de votación activa. Por favor, ingrese su DNI primero."
+            }), 400
+
+        # Obtener el DNI de la sesión
+        dni = session['voto_actual'].get('dni')
+        if not dni:
+            return jsonify({
+                "success": False, 
+                "error": "DNI no encontrado en la sesión. Por favor, ingrese su DNI nuevamente."
+            }), 400
+
+        # Obtener la imagen del request
+        data = request.get_json()
+        if not data or 'imagen' not in data:
+            return jsonify({
+                "success": False, 
+                "error": "No se recibió la imagen para el reconocimiento facial."
+            }), 400
+
+        # Importar y usar el procesador de imágenes
+        from reconocer_usuario import procesar_imagen
+        resultado = procesar_imagen(data['imagen'], dni)
+
+        if resultado['success']:
+            # Actualizar la sesión con el nombre reconocido
+            session['voto_actual']['nombre_reconocido'] = resultado['nombre']
+            print(f"Reconocimiento exitoso para DNI {dni}: {resultado['nombre']}")
+        else:
+            print(f"Error en reconocimiento para DNI {dni}: {resultado['error']}")
+
+        return jsonify(resultado)
+
+    except Exception as e:
+        print(f"Error en el proceso de reconocimiento: {str(e)}")
+        return jsonify({
+            "success": False, 
+            "error": f"Error en el proceso de reconocimiento: {str(e)}"
+        }), 500
+
+@app.route('/obtener_dni')
+def obtener_dni():
+    try:
+        print("Obteniendo DNI de la sesión...")  # Log de inicio
+        print(f"Contenido de la sesión: {session}")  # Log del contenido de la sesión
+        
+        if 'voto_actual' not in session:
+            print("No hay sesión de votación activa")  # Log de error
+            return jsonify({"error": "No hay sesión de votación activa"}), 400
+            
+        dni = session['voto_actual'].get('dni')
+        print(f"DNI obtenido de la sesión: {dni}")  # Log del DNI
+        
+        if not dni:
+            print("DNI no encontrado en la sesión")  # Log de error
+            return jsonify({"error": "DNI no encontrado en la sesión"}), 400
+            
+        return jsonify({"dni": dni})
+    except Exception as e:
+        print(f"Error al obtener DNI: {str(e)}")  # Log de error
+        return jsonify({"error": "Error al obtener el DNI"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    print("Iniciando servidor Flask...")
+    print(f"Directorio de templates: {app.template_folder}")
+    print(f"Directorio de archivos estáticos: {app.static_folder}")
+    print("La aplicación Flask se ejecutará en el puerto 5000")
+    print("La base de datos MySQL se conectará en el puerto 3306")
+    app.run(debug=True, port=5000, host='127.0.0.1')

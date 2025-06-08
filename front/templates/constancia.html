@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Constancia</title>
     <script>
         // Redirigir a fin_voto.html después de 5 segundos
         setTimeout(() => {
             window.location.href = "{{ url_for('fin_voto') }}";
-        }, 5000);
+        }, 10000);
     </script>
 </head>
+
 <body>
     <div class="contenedor_img">
-        <img class="img_primaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
+        <img class="img_primaria"
+            src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
     </div>
     <div class="contenedor_secundario">
         <h1>Imprimiendo Constancia</h1>
+        {% if session.get('constancia_pdf') %}
+        <div class="contenedor_btn_descargar">
+            <a class="btn_descargar"
+                href="{{ url_for('static', filename='constancias/' + session.get('constancia_pdf')) }}" download>
+                Descargar Constancia <i class="bi bi-file-earmark-arrow-down-fill"></i>
+            </a>
+        </div>
+        {% endif %}
     </div>
 </body>
+
 </html>
