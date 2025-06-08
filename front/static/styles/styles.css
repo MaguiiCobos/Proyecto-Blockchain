@@ -265,32 +265,70 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
 }
 
-.img-rec{
+.texto_instruccion {
+    color: #3E4670;
+    font-size: 1.2vw;
+    margin-top: 1vw;
+    max-width: 600px;
+}
+
+.video_container {
     position: relative;
-    margin-top: 1.5vw;
+    width: 700px;
+    height: 400px;
+    margin: 0 auto;
     border-radius: 10px;
-    width: 70vw;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.contenedor_texto{
-    display: flex;
+.overlay {
     position: absolute;
-    justify-content: space-between;
-    width: 95vw;
-    margin: 2.5vw 1.5vw;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    bottom: 0;
+    pointer-events: none;
 }
 
-.link_texto_validar{
-    text-decoration: none;
+.face_box {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed #449DD1;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
 }
 
-.texto_validar{
-    align-items:end;
-    font-size: 1.5vw;
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.contenedor_estado {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.estado_mensaje {
+    font-size: 1.2vw;
+    color: #3E4670;
+    transition: all 0.3s ease;
 }
 
 .contenedor_btn_volver2 {
@@ -312,16 +350,28 @@ input {
     margin: 30px;
 }
 
-#capturar{
-    margin-top: 30px;
+.btn_capturar {
+    background-color: #252C4F;
+    color: #F5FBFF;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2vw;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.btn_capturar {
-    position: absolute;
-    background-color: #252C4F;
-    padding: 0.8vw;
-    border-radius: 10px;
+.btn_capturar:hover:not(:disabled) {
+    background-color: #1e2135;
+    transform: translateY(-2px);
 }
+
+.btn_capturar:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 /*VOTACION*/
 
 .contenedor_partidos{
