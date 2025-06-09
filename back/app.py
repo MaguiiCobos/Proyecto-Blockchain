@@ -1,21 +1,19 @@
 #comando para ejecutar (Magui :\ )
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
-<<<<<<< HEAD
+
 #comando para ejecutar el reconocimiento facia
 #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
 # python back/reconocer_usuario.py
 
 
 from flask import Flask, request, jsonify, render_template, session, redirect
-=======
 #comando para ejecutar el reconocimiento facial
 # C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
 # python back/reconocer_usuario.py
 
 
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
->>>>>>> f18e0bd0759e2f809ace0315d9bb37602c5545fd
 #from dotenv import load_dotenv
 import os
 import sys
@@ -27,12 +25,14 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Configuración para generar PDFs
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from datetime import datetime
+
 
 # from reconocer_usuario import capturar_y_reconocer
 #from supabase import create_client
@@ -306,8 +306,8 @@ def votacion_cat():
     return render_template('votacion_cat.html')
 
 
-@app.route('/guardar_voto', methods=['POST'])
-def guardar_voto():
+@app.route('/guardar_voto_template', methods=['POST'])
+def guardar_voto_template():
     # Obtener los votos del formulario
     voto_presidente = request.form.get('voto_presidente')
     voto_gobernador = request.form.get('voto_gobernador')
@@ -326,7 +326,7 @@ def guardar_voto():
         elif valor == "UNIDOS":
             return 3
         elif valor == "BLANCO":
-            return 0
+            return 99  # Usa el ID real del partido blanco
         return None
 
     id_presidente = partido_a_id(voto_presidente)
