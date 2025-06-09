@@ -283,7 +283,86 @@ def voto_blanco():
 
 @app.route('/tu_voto')
 def tu_voto():
-    return render_template('tu_voto.html')
+    # Conectar a la base de datos
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    votos = {
+        'presidente': None,
+        'gobernador': None,
+        'intendente': None
+    }
+
+    # Obtener el presidente, gobernador e intendente del votante actual
+    if 'voto_actual' in session:
+        presidente = session['voto_actual']['presidente']
+        gobernador = session['voto_actual']['gobernador']
+        intendente = session['voto_actual']['intendente']
+
+        # Función auxiliar para obtener información del partido y candidato
+        def obtener_info_voto(id_partido, cargo):
+            if id_partido == 0:
+                return {'es_blanco': True}
+            
+            # Obtener información del partido y candidato
+            query = """
+                SELECT 
+                    p.nombre as nombre_partido,
+                    p.lista as lista,
+                    p.foto_presidentes as foto_presidente,
+                    p.foto_gobernadores as foto_gobernador,
+                    p.foto_intendente as foto_intendente,
+                    c.nombre,
+                    c.apellido,
+                    vc.nombre as nombre_vice,
+                    vc.apellido as apellido_vice
+                FROM partidos p
+                LEFT JOIN candidatos c ON 
+                    CASE 
+                        WHEN %s = 'presidente' THEN p.id_presidente = c.id_candidato
+                        WHEN %s = 'gobernador' THEN p.id_gobernador = c.id_candidato
+                        WHEN %s = 'intendente' THEN p.id_intendente = c.id_candidato
+                    END
+                LEFT JOIN candidatos vc ON
+                    CASE 
+                        WHEN %s = 'presidente' THEN p.id_vice_presidente = vc.id_candidato
+                        WHEN %s = 'gobernador' THEN p.id_vice_gobernador = vc.id_candidato
+                        WHEN %s = 'intendente' THEN NULL
+                    END
+                WHERE p.id_partidos = %s
+            """
+            cursor.execute(query, (cargo, cargo, cargo, cargo, cargo, cargo, id_partido))
+            resultado = cursor.fetchone()
+            
+            if resultado:
+                foto = None
+                if cargo == 'presidente':
+                    foto = resultado['foto_presidente']
+                elif cargo == 'gobernador':
+                    foto = resultado['foto_gobernador']
+                elif cargo == 'intendente':
+                    foto = resultado['foto_intendente']
+
+                return {
+                    'es_blanco': False,
+                    'partido': resultado['nombre_partido'],
+                    'lista': resultado['lista'],
+                    'candidato': f"{resultado['apellido']}, {resultado['nombre']}",
+                    'vice': f"{resultado['apellido_vice']}, {resultado['nombre_vice']}" if resultado['nombre_vice'] else None,
+                    'imagen': foto
+                }
+            return {'es_blanco': True}
+
+        # Obtener información para cada cargo
+        votos['presidente'] = obtener_info_voto(presidente, 'presidente')
+        votos['gobernador'] = obtener_info_voto(gobernador, 'gobernador')
+        votos['intendente'] = obtener_info_voto(intendente, 'intendente')
+
+    # Cerrar la conexión
+    cursor.close()
+    conn.close()
+
+    return render_template('tu_voto.html', votos=votos)
 
 @app.route('/reconocimiento')
 def reconocimiento():
@@ -337,27 +416,6 @@ def guardar_voto_template():
     session['voto_actual']['presidente'] = id_presidente
     session['voto_actual']['gobernador'] = id_gobernador
     session['voto_actual']['intendente'] = id_intendente
-
-    # Guardar en la base de datos
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        # Actualizar la tabla de votantes para marcar que ya votó
-        dni = session['voto_actual']['dni']
-        cursor.execute("UPDATE votantes SET ha_votado = 1 WHERE dni = %s", (dni,))
-
-        # Insertar el voto en la tabla de votos (ajusta el nombre de la tabla y columnas según tu modelo)
-        cursor.execute(
-            "INSERT INTO votos (dni, id_partido_presidente, id_partido_gobernador, id_partido_intendente) VALUES (%s, %s, %s, %s)",
-            (dni, id_presidente, id_gobernador, id_intendente)
-        )
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        return f"Error al guardar el voto: {str(e)}", 500
 
     return redirect('/tu_voto')
 
