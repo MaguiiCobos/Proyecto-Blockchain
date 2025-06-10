@@ -1,21 +1,21 @@
 #comando para ejecutar (Magui :\ )
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
-<<<<<<< HEAD
-#comando para ejecutar el reconocimiento facia
-#C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
-# python back/reconocer_usuario.py
+# <<<<<<< HEAD
+# #comando para ejecutar el reconocimiento facia
+# #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
+# # python back/reconocer_usuario.py
 
 
-from flask import Flask, request, jsonify, render_template, session, redirect
-=======
+# from flask import Flask, request, jsonify, render_template, session, redirect
+#=======
 #comando para ejecutar el reconocimiento facial
 # C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
 # python back/reconocer_usuario.py
 
 
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
->>>>>>> f18e0bd0759e2f809ace0315d9bb37602c5545fd
+#>>>>>>> f18e0bd0759e2f809ace0315d9bb37602c5545fd
 #from dotenv import load_dotenv
 import os
 import sys
