@@ -6,8 +6,8 @@
 # python back/reconocer_usuario.py
 
 
-from flask import Flask, request, jsonify, render_template, session
-#from dotenv import load_dotenv
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from dotenv import load_dotenv
 import os
 import sys
 import mysql.connector
@@ -16,8 +16,9 @@ import subprocess
 
 import tkinter as tk
 from tkinter import messagebox
+from blockchain.contrato import s_contrato, cuenta, w3  # Importar el contrato de votación
 
-
+from datetime import datetime
 # from reconocer_usuario import capturar_y_reconocer
 #from supabase import create_client
 
@@ -89,7 +90,8 @@ def verificar_dni():
                     'gobernador': 0,
                     'intendente': 0
                 }
-                return jsonify({"existe": True, "habilitado": True, "mensaje": "DNI válido. Puede votar."})
+                
+                return jsonify({"existe": True, "habilitado": True, "mensaje": "DNI válido. Puede votar.", "VotoActual": session['voto_actual']})
             else:
                 return jsonify({"existe": True, "habilitado": False, "mensaje": "Este votante ya ha votado."})
         else:
@@ -288,6 +290,103 @@ def ver_sesion():
     if 'voto_actual' in session:
         return jsonify({"sesion": session['voto_actual']})
     return jsonify({"error": "No hay sesión activa"}), 404
+
+
+@app.route('/guardar_voto')
+def guardar_voto():
+    if 'voto_actual' not in session:
+        return "No hay voto en la sesión."
+
+    voto = session['voto_actual']
+    presidente = voto['presidente']
+    gobernador = voto['gobernador']
+    intendente = voto['intendente']    
+
+    #Ejecutar la transacción
+    try:
+        #Guardar el voto en la blockchain
+        tx_hash = s_contrato.functions.guardarVoto(presidente, gobernador, intendente).transact({'from': cuenta})
+        tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+        #Obtener datos del bloque
+        bloque = w3.eth.get_block(tx_receipt.blockNumber)
+        timestamp = datetime.fromtimestamp(bloque.timestamp)
+
+        #Guardar metadatos del voto en la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        insert_query = """ 
+            INSERT INTO transacciones_blockchain (tx_hash, bloque_numero, direccion_emisora, timestamp)
+            VALUES(%s, %s, %s, %s)
+                
+        """
+        
+        values = (tx_hash.hex(), tx_receipt.blockNumber, cuenta, timestamp)
+        
+        cursor.execute(insert_query, values)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+
+
+        return f"Voto guardado en la blockchain. Hash de transacción: {tx_hash.hex()}"
+    except Exception as e:
+        return f"Error al guardar el voto en la blockchain. {str(e)}"
+
+@app.route('/ver_votos')
+def ver_votos():
+        
+    try:
+        total = s_contrato.functions.totalVotos().call()
+        lista_votos = []
+
+        for i in range(total):
+            presidente, gobernador, intendente = s_contrato.functions.obtenerVoto(i).call()
+            lista_votos.append({
+                'presidente': presidente,
+                'gobernador': gobernador,
+                'intendente': intendente
+            })
+        
+
+        #Obtener los metadatos de la BD
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) # dictionary=True para que devuelva cada fila como diccionario y no como tupla
+
+        cursor.execute("SELECT * FROM transacciones_blockchain ORDER BY id ASC")
+        transacciones = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        # Creo lista para poder mostrar todos los valores del bloque 
+        votos_completos = []
+        '''
+        La función min en el bucle for se utiliza para encontrar el valor mínimo entre 
+        las longitudes de las dos listas. 
+        Esto significa que si lista_votos tiene 5 elementos y transacciones tiene 3, min devolverá 3.
+        '''
+        for i in range(min(len(lista_votos), len(transacciones))): 
+            voto = lista_votos[i]
+            meta = transacciones[i] #meta de metadato
+            votos_completos.append({
+                'presidente': voto['presidente'],
+                'gobernador': voto['gobernador'],
+                'intendente': voto['intendente'],
+                'tx_hash': meta['tx_hash'],
+                'bloque_numero': meta['bloque_numero'],
+                'direccion_emisora': meta['direccion_emisora'],
+                'timeStamp': meta['timestamp'].strftime("%Y-%m-%d %H:%M:%S")
+            })
+
+        return jsonify(votos_completos)
+    
+    except Exception as e:
+        return f"Error al obtener los votos de la blockchain. {str(e)}"
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
