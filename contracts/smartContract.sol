@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
+//truffle.cmd compile
 
 pragma solidity ^0.8.13;
 

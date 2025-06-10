@@ -387,6 +387,36 @@ def resultados():
 def votacion_cat():
     return render_template('votacion_cat.html')
 
+@app.route('/confirmar_voto')
+def confirmar_voto():
+    try:
+        # Verificar que la sesión existe y tiene los datos necesarios
+        if 'voto_actual' not in session:
+            return redirect(url_for('index'))
+        
+        # Obtener el DNI del votante
+        dni = session['voto_actual']['dni']
+        
+        # Conectar a la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        
+        # Actualizar el estado del votante
+        query = "UPDATE votantes SET ha_votado = 1 WHERE dni = %s"
+        cursor.execute(query, (dni,))
+        conn.commit()
+        
+        # Cerrar la conexión
+        cursor.close()
+        conn.close()
+        
+        # Redirigir a la página de constancia
+        return redirect(url_for('constancia'))
+        
+    except Exception as e:
+        print(f"Error al confirmar voto: {str(e)}")
+        return redirect(url_for('index'))
+
 
 @app.route('/guardar_voto_template', methods=['POST'])
 def guardar_voto_template():
@@ -420,13 +450,10 @@ def guardar_voto_template():
     session['voto_actual']['gobernador'] = id_gobernador
     session['voto_actual']['intendente'] = id_intendente
 
-<<<<<<< HEAD
     # Guardar los votos en un archivo de texto
     with open('votos_guardados.txt', 'a', encoding='utf-8') as f:
         f.write(f"DNI: {session['voto_actual']['dni']}, Presidente: {id_presidente}, Gobernador: {id_gobernador}, Intendente: {id_intendente}\n")
 
-=======
->>>>>>> e4c3f98003949c5cf6776e8ecad810db10cefec0
     return redirect('/tu_voto')
 
 # @app.route('/set_voto_test')
