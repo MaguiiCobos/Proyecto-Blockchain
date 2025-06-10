@@ -276,7 +276,6 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
 }
 
 .texto_instruccion {
@@ -287,25 +286,22 @@ input {
 }
 
 .video_container {
+.img-rec {
     position: relative;
-    width: 700px;
-    height: 400px;
-    margin: 0 auto;
+    margin-top: 1.5vw;
     border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 70vw;
 }
 
 .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.contenedor_texto {
     display: flex;
-    justify-content: center;
+    position: absolute;
+    justify-content: space-between;
+    width: 95vw;
+    margin: 2.5vw 1.5vw;
     align-items: center;
-    pointer-events: none;
+    bottom: 0;
 }
 
 .face_box {
@@ -340,6 +336,13 @@ input {
     font-size: 1.2vw;
     color: #3E4670;
     transition: all 0.3s ease;
+.link_texto_validar {
+    text-decoration: none;
+}
+
+.texto_validar {
+    align-items: end;
+    font-size: 1.5vw;
 }
 
 .contenedor_btn_volver2 {
@@ -361,11 +364,14 @@ input {
     margin: 30px;
 }
 
+#capturar {
+    margin-top: 30px;
+}
+
 .btn_capturar {
+    position: absolute;
     background-color: #252C4F;
-    color: #F5FBFF;
-    padding: 12px 30px;
-    border: none;
+    padding: 0.8vw;
     border-radius: 10px;
     font-size: 1.2vw;
     cursor: pointer;
@@ -398,6 +404,8 @@ input {
     color: #3E4670;
     font-size: 1.2vw;
     margin: 0;
+}
+
 }
 
 /*VOTACION*/
@@ -452,20 +460,13 @@ input {
     display: flex;
     flex-direction: column;
     margin: 25px 20px;
-    height: 6vw;
 }
 
 .titulo {
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 1vw;
+    margin-bottom: 10px;
 }
-
-.subtitulo {
-    font-size: 15px;
-    font-weight: bold;
-    margin-bottom: 0.2vw;
-}  
 
 .btn_siguiente2 {
     background-color: #2b2d42;
@@ -855,4 +856,35 @@ body:not(:has(:target)) #presidente {
 
 .bi-file-earmark-arrow-down-fill{
     font-size: 1.5vw;
+}
+
+.input-radio {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.partido-opcion,
+.voto-blanco-opcion {
+    cursor: pointer;
+    display: block;
+    position: relative;
+}
+
+.input-radio:checked+.tarjeta,
+.input-radio:checked+.btn_blanco {
+    border: 3px solid #1976d2;
+    box-shadow: 0 0 10px #1976d2;
+    background: #e3f2fd;
+}
+
+/* Opcional: resalta la tarjeta al pasar el mouse */
+.partido-opcion:hover .tarjeta,
+.voto-blanco-opcion:hover .btn_blanco {
+    box-shadow: 0 0 8px #1976d2;
+}
+
+.partido-opcion:not(:last-child) .tarjeta {
+    margin-bottom: 24px;
 }
