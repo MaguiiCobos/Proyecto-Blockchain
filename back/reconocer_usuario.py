@@ -7,10 +7,11 @@ import tkinter as tk # se instalo cdo se instalo python
 from tkinter import simpledialog, messagebox
 import time
 import mysql.connector
+import base64
+from PIL import Image
+import io
 
 from db_config import db_config  # Para usar la configuracion de la conexion (desde db_config.py)
-
-#agregue 🔴
 
 # Crear la ventana principal de tkinter
 root = tk.Tk()
@@ -21,34 +22,101 @@ imagenes_votantes = []
 nombres_votantes = []
 lista_votantes = os.listdir(ruta)
 
+def asegurar_formato_imagen(ruta_imagen):
+    """Asegura que la imagen esté en formato RGB de 8 bits"""
+    try:
+        # Abrir la imagen con PIL
+        with Image.open(ruta_imagen) as img:
+            # Convertir a RGB si no lo es
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            # Redimensionar si es necesario
+            max_size = 800
+            if max(img.size) > max_size:
+                ratio = max_size / max(img.size)
+                new_size = tuple(int(dim * ratio) for dim in img.size)
+                img = img.resize(new_size, Image.Resampling.LANCZOS)
+            
+            # Convertir a array numpy
+            img_array = np.array(img)
+            
+            # Asegurar que sea uint8
+            if img_array.dtype != np.uint8:
+                img_array = (img_array * 255).astype(np.uint8)
+            
+            return img_array
+    except Exception as e:
+        print(f"Error al procesar imagen {ruta_imagen}: {str(e)}")
+        return None
+
 # Carga los nombres de los votantes 
+print("\n=== Iniciando carga de votantes ===")
 for nombre in lista_votantes:
     ruta_imagen = f"{ruta}/{nombre}"
-    imagen_actual = cv2.imread(ruta_imagen)
+    try:
+        # Procesar la imagen para asegurar formato correcto
+        imagen = asegurar_formato_imagen(ruta_imagen)
+        if imagen is None:
+            print(f"Error: No se pudo procesar la imagen: {ruta_imagen}")
+            continue
+        
+        imagenes_votantes.append(imagen)
+        nombres_votantes.append(os.path.splitext(nombre)[0])
+        print(f"Imagen cargada correctamente: {nombre} (tamaño: {imagen.shape}, tipo: {imagen.dtype})")
+    except Exception as e:
+        print(f"Error al cargar la imagen {nombre}: {str(e)}")
+        continue
 
-    if imagen_actual is None:
-        print(f"⚠️ No se pudo leer la imagen: {ruta_imagen}")
-        continue  # Salta esta imagen si no se puede leer
-
-    imagenes_votantes.append(imagen_actual)
-    nombres_votantes.append(os.path.splitext(nombre)[0])
-
-
-print(f"🔴 Lista de inscriptos para el evento: \n{nombres_votantes}")
+print("\nLista de votantes cargados:")
+for nombre in nombres_votantes:
+    print(f"- {nombre}")
 
 # Codificar imagenes
 def codificar(imagenes):
     lista_codificada = []
     for idx, imagen in enumerate(imagenes):
         try:
-            imagen = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
+            print(f"\nProcesando imagen de {nombres_votantes[idx]}")
+            print(f"Formato original: shape={imagen.shape}, dtype={imagen.dtype}")
+            
+            # Verificar formato
+            if len(imagen.shape) != 3 or imagen.shape[2] != 3:
+                print("Error: La imagen no está en formato RGB")
+                continue
+                
+            if imagen.dtype != np.uint8:
+                print("Error: La imagen no está en formato de 8 bits")
+                continue
+            
+            # Intentar codificar
+            print("Intentando codificar el rostro...")
             codificados = fr.face_encodings(imagen)
+            
             if codificados:
                 lista_codificada.append(codificados[0])
+                print(f"Imagen {nombres_votantes[idx]} codificada correctamente")
             else:
-                print(f"⚠️ No se detectaron caras en la imagen {nombres_votantes[idx]}")
+                print(f"No se detectaron caras en la imagen {nombres_votantes[idx]}")
+                
         except Exception as e:
-            print(f"❌ Error al codificar una imagen: {str(e)}")
+            print(f"Error al codificar la imagen {nombres_votantes[idx]}: {str(e)}")
+            print(f"Formato de la imagen: shape={imagen.shape}, dtype={imagen.dtype}")
+            # Intentar cargar la imagen directamente con face_recognition
+            try:
+                print("Intentando cargar la imagen directamente con face_recognition...")
+                imagen_directa = asegurar_formato_imagen(f"{ruta}/{nombres_votantes[idx]}.jpg")
+                if imagen_directa is not None:
+                    codificados = fr.face_encodings(imagen_directa)
+                    if codificados:
+                        lista_codificada.append(codificados[0])
+                        print(f"Imagen {nombres_votantes[idx]} codificada correctamente (método alternativo)")
+                    else:
+                        print(f"No se detectaron caras en la imagen {nombres_votantes[idx]} (método alternativo)")
+                else:
+                    print(f"No se pudo cargar la imagen {nombres_votantes[idx]} (método alternativo)")
+            except Exception as e2:
+                print(f"Error en método alternativo: {str(e2)}")
     return lista_codificada
 
 
@@ -72,7 +140,7 @@ def validar_imagenes():
     cara_captura_codificada = fr.face_encodings(imagen, cara_captura)
     
     if not cara_captura_codificada:
-        messagebox.showerror("Error", "No se ha detectado ninguna cara en la imagen")
+        # messagebox.showerror("Error", "No se ha detectado ninguna cara en la imagen")
         validar_imagenes()
         return
 
@@ -89,7 +157,7 @@ def validar_imagenes():
             cv2.rectangle(imagen, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.rectangle(imagen, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
             cv2.putText(imagen, nombre, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-            messagebox.showinfo("Acceso Permitido", f"Bienvenid@, {nombre}. Puedes ingresar a la reunión")
+            # messagebox.showinfo("Acceso Permitido", f"Bienvenid@, {nombre}. Puedes ingresar a la reunión")
             cv2.imshow("Imagen capturada", imagen)
             cv2.waitKey(4000)  # Mostrar por 4 segundos
             cv2.destroyAllWindows()
@@ -97,14 +165,14 @@ def validar_imagenes():
 lista_inscriptos_codificada = codificar(imagenes_votantes)
 
 # Mensaje de bienvenida
-messagebox.showinfo("Registro de voto", "Bienvenid@ al sistema de Votacion Electronico")
-opcion = messagebox.askyesno("Registro", "¿Desea ingresar al Sistema de Votacion?")
+# messagebox.showinfo("Registro de voto", "Bienvenid@ al sistema de Votacion Electronico")
+# opcion = messagebox.askyesno("Registro", "¿Desea ingresar al Sistema de Votacion?")
 
-if opcion:  # Si el usuario hace clic en "Sí"
-    messagebox.showinfo("Validación", "Abriendo la cámara para capturar tu imagen")
-    validar_imagenes()
-else:
-    messagebox.showinfo("Registro", "Has elegido no registrarte.")
+# if opcion:  # Si el usuario hace clic en "Sí"
+#     messagebox.showinfo("Validación", "Abriendo la cámara para capturar tu imagen")
+#     validar_imagenes()
+# else:
+#     messagebox.showinfo("Registro", "Has elegido no registrarte.")
 
 
 
@@ -311,3 +379,268 @@ if opcion:  # Si el usuario hace clic en "Sí"
 else:
     messagebox.showinfo("Registro", "Has elegido no registrarte.")
 '''
+
+class ReconocimientoFacial:
+    def __init__(self):
+        self.rostros_votantes = {}
+        self.umbral_similitud = 0.6
+
+    def cargar_votantes(self):
+        """Carga las imágenes de los votantes desde la base de datos"""
+        try:
+            print("\n=== Iniciando carga de votantes ===")
+            
+            # Verificar que exista el directorio de imágenes
+            ruta_base = os.path.join("front", "static", "images", "votantes")
+            if not os.path.exists(ruta_base):
+                print(f"ERROR: El directorio de imágenes no existe: {ruta_base}")
+                raise Exception(f"El directorio de imágenes no existe: {ruta_base}")
+            
+            print(f"Directorio de imágenes encontrado: {ruta_base}")
+            print("Imágenes disponibles:")
+            for archivo in os.listdir(ruta_base):
+                print(f"- {archivo}")
+            
+            # Conectar a la base de datos
+            print("\nConectando a la base de datos...")
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            
+            # Obtener los votantes con sus imágenes
+            print("\nConsultando votantes con imágenes...")
+            cursor.execute("""
+                SELECT dni, nombre, apellido, foto 
+                FROM votantes 
+                WHERE foto IS NOT NULL AND foto != ''
+            """)
+            
+            votantes = cursor.fetchall()
+            print(f"Se encontraron {len(votantes)} votantes con imágenes en la base de datos")
+            
+            if len(votantes) == 0:
+                print("\nNo se encontraron votantes con imágenes en la base de datos")
+                raise Exception("No se encontraron votantes con imágenes en la base de datos")
+            
+            # Procesar cada votante
+            for dni, nombre, apellido, foto_relativa in votantes:
+                try:
+                    print(f"\nProcesando votante: DNI={dni}, Nombre={nombre} {apellido}")
+                    
+                    # Construir la ruta de la imagen usando el DNI
+                    ruta_completa = os.path.join(ruta_base, f"{dni}.jpg")
+                    print(f"Buscando imagen en: {ruta_completa}")
+                    
+                    if not os.path.exists(ruta_completa):
+                        print(f"ERROR: No se encontró la imagen para DNI {dni}")
+                        continue
+                    
+                    # Cargar la imagen con OpenCV (esto devuelve BGR)
+                    imagen_bgr = cv2.imread(ruta_completa)
+                    if imagen_bgr is None:
+                        print(f"ERROR: No se pudo leer la imagen: {ruta_completa}")
+                        continue
+                    
+                    # Redimensionar si es necesario
+                    if max(imagen_bgr.shape) > 800:
+                        scale = 800 / max(imagen_bgr.shape)
+                        new_shape = tuple(int(dim * scale) for dim in imagen_bgr.shape[:2])
+                        imagen_bgr = cv2.resize(imagen_bgr, (new_shape[1], new_shape[0]))
+                        print(f"Imagen redimensionada a: {new_shape}")
+                    
+                    # Convertir BGR a RGB (necesario para face_recognition)
+                    imagen_rgb = cv2.cvtColor(imagen_bgr, cv2.COLOR_BGR2RGB)
+                    print(f"Imagen convertida a RGB: shape={imagen_rgb.shape}, dtype={imagen_rgb.dtype}")
+                    
+                    # Detectar y codificar el rostro
+                    ubicaciones = fr.face_locations(imagen_rgb)
+                    if ubicaciones:
+                        print(f"Se detectaron {len(ubicaciones)} rostros")
+                        codificaciones = fr.face_encodings(imagen_rgb, ubicaciones)
+                        if codificaciones:
+                            # Guardar las codificaciones del rostro
+                            if dni not in self.rostros_votantes:
+                                self.rostros_votantes[dni] = []
+                            self.rostros_votantes[dni].extend(codificaciones)
+                            print(f"Imagen procesada correctamente para DNI: {dni}")
+                        else:
+                            print(f"No se pudo codificar el rostro para DNI: {dni}")
+                    else:
+                        print(f"No se detectó ningún rostro para DNI: {dni}")
+                    
+                except Exception as e:
+                    print(f"Error al procesar votante DNI {dni}: {str(e)}")
+                    continue
+            
+            cursor.close()
+            conn.close()
+            
+            # Verificar si se cargaron imágenes correctamente
+            if not self.rostros_votantes:
+                print("\nERROR: No se pudo cargar ninguna imagen de votante correctamente")
+                print("Resumen de errores:")
+                print("1. Verificar que las imágenes existan en:", ruta_base)
+                print("2. Verificar que los nombres de las imágenes coincidan con los DNIs")
+                print("3. Verificar que las imágenes contengan rostros detectables")
+                raise Exception("No se pudo cargar ninguna imagen de votante correctamente")
+            
+            print(f"\nResumen: Se cargaron correctamente {len(self.rostros_votantes)} votantes")
+            print("DNIs cargados:", list(self.rostros_votantes.keys()))
+            
+        except Exception as e:
+            print(f"\nError al cargar votantes: {str(e)}")
+            raise
+
+    def procesar_imagen_base64(self, imagen_base64):
+        """Convierte una imagen base64 a formato OpenCV"""
+        try:
+            print("\n=== Iniciando procesamiento de imagen base64 ===")
+            
+            # Eliminar el prefijo de la cadena base64 si existe
+            if ',' in imagen_base64:
+                imagen_base64 = imagen_base64.split(',')[1]
+            
+            # Decodificar la imagen base64
+            imagen_bytes = base64.b64decode(imagen_base64)
+            
+            # Convertir bytes a array numpy
+            nparr = np.frombuffer(imagen_bytes, np.uint8)
+            
+            # Decodificar la imagen con OpenCV (esto devuelve BGR)
+            imagen_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
+            if imagen_bgr is None:
+                raise ValueError("No se pudo decodificar la imagen")
+            
+            print(f"Imagen decodificada: shape={imagen_bgr.shape}, dtype={imagen_bgr.dtype}")
+            
+            # Convertir BGR a RGB (necesario para face_recognition)
+            imagen_rgb = cv2.cvtColor(imagen_bgr, cv2.COLOR_BGR2RGB)
+            print(f"Imagen convertida a RGB: shape={imagen_rgb.shape}, dtype={imagen_rgb.dtype}")
+            return imagen_rgb
+            
+        except Exception as e:
+            print(f"Error al procesar imagen base64: {str(e)}")
+            raise
+
+    def reconocer_rostro(self, imagen):
+        """Reconoce un rostro en la imagen y lo compara con los votantes registrados"""
+        try:
+            print("\n=== Iniciando reconocimiento facial ===")
+            print(f"Dimensiones de la imagen: {imagen.shape}")
+            
+            # Detectar rostros en la imagen
+            print("Detectando rostros...")
+            ubicaciones = fr.face_locations(imagen)
+            if not ubicaciones:
+                print("No se detectó ningún rostro en la imagen")
+                return None, "No se detectó ningún rostro en la imagen"
+            
+            print(f"Se detectaron {len(ubicaciones)} rostros")
+            
+            # Codificar el rostro detectado
+            print("Codificando rostro detectado...")
+            codificaciones = fr.face_encodings(imagen, ubicaciones)
+            if not codificaciones:
+                print("No se pudo codificar el rostro detectado")
+                return None, "No se pudo codificar el rostro detectado"
+            
+            print("Comparando con rostros registrados...")
+            # Comparar con los rostros registrados
+            for codificacion in codificaciones:
+                for dni, rostros_registrados in self.rostros_votantes.items():
+                    print(f"\nComparando con votante DNI: {dni}")
+                    for rostro_registrado in rostros_registrados:
+                        # Calcular la distancia entre los rostros
+                        distancia = fr.face_distance([rostro_registrado], codificacion)[0]
+                        print(f"Distancia: {distancia}")
+                        
+                        # Si la distancia es menor al umbral, consideramos que es la misma persona
+                        if distancia < self.umbral_similitud:
+                            print(f"¡Rostro reconocido! DNI: {dni}")
+                            return dni, None
+            
+            print("No se encontró coincidencia con ningún rostro registrado")
+            return None, "No se encontró coincidencia con ningún rostro registrado"
+            
+        except Exception as e:
+            print(f"Error en el reconocimiento facial: {str(e)}")
+            return None, f"Error en el reconocimiento facial: {str(e)}"
+
+def procesar_imagen(imagen_base64, dni):
+    """Función principal para procesar una imagen y reconocer al votante"""
+    try:
+        print(f"\n=== Iniciando procesamiento de imagen para DNI: {dni} ===")
+        print("1. Verificando conexión a la base de datos...")
+        
+        # Crear instancia del reconocedor
+        reconocedor = ReconocimientoFacial()
+        
+        # Cargar votantes
+        print("\n2. Cargando votantes desde la base de datos...")
+        try:
+            reconocedor.cargar_votantes()
+        except Exception as e:
+            print(f"Error al cargar votantes: {str(e)}")
+            print("Verificando directorio de imágenes...")
+            ruta_imagenes = os.path.join("front", "static", "images", "votantes")
+            if os.path.exists(ruta_imagenes):
+                print(f"Contenido del directorio {ruta_imagenes}:")
+                for archivo in os.listdir(ruta_imagenes):
+                    print(f"- {archivo}")
+            else:
+                print(f"El directorio {ruta_imagenes} no existe")
+            raise
+        
+        # Procesar la imagen base64
+        print("\n3. Procesando imagen base64...")
+        try:
+            # Eliminar el prefijo de la cadena base64 si existe
+            if ',' in imagen_base64:
+                imagen_base64 = imagen_base64.split(',')[1]
+            
+            # Decodificar la imagen base64
+            imagen_bytes = base64.b64decode(imagen_base64)
+            
+            # Convertir bytes a array numpy
+            nparr = np.frombuffer(imagen_bytes, np.uint8)
+            
+            # Decodificar la imagen con OpenCV (esto devuelve BGR)
+            imagen_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
+            if imagen_bgr is None:
+                raise ValueError("No se pudo decodificar la imagen")
+            
+            print(f"Imagen decodificada: shape={imagen_bgr.shape}, dtype={imagen_bgr.dtype}")
+            
+            # Convertir BGR a RGB (necesario para face_recognition)
+            imagen_rgb = cv2.cvtColor(imagen_bgr, cv2.COLOR_BGR2RGB)
+            print(f"Imagen convertida a RGB: shape={imagen_rgb.shape}, dtype={imagen_rgb.dtype}")
+            
+        except Exception as e:
+            print(f"Error al procesar imagen base64: {str(e)}")
+            raise
+        
+        # Reconocer el rostro
+        print("\n4. Intentando reconocer el rostro...")
+        try:
+            dni_reconocido, error = reconocedor.reconocer_rostro(imagen_rgb)
+            if error:
+                print(f"Error en el reconocimiento: {error}")
+                return {"success": False, "error": error}
+        except Exception as e:
+            print(f"Error en el reconocimiento facial: {str(e)}")
+            raise
+        
+        if dni_reconocido != dni:
+            print(f"El DNI reconocido ({dni_reconocido}) no coincide con el DNI de la sesión ({dni})")
+            return {"success": False, "error": "El rostro no coincide con el DNI ingresado"}
+        
+        print(f"Reconocimiento exitoso para DNI: {dni}")
+        return {
+            "success": True,
+            "nombre": dni_reconocido,
+            "dni": dni
+        }
+    except Exception as e:
+        print(f"Error en el procesamiento de la imagen: {str(e)}")
+        return {"success": False, "error": str(e)}
