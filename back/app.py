@@ -1,16 +1,18 @@
 #comando para ejecutar (Magui :\ )
 #python c:/Users/FLORENCIA/Desktop/Proyecto-Blockchain/back/app.py
 
+# <<<<<<< HEAD
+# #comando para ejecutar el reconocimiento facia
+# #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
+# # C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
 
-#comando para ejecutar el reconocimiento facia
-#C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
-# python back/reconocer_usuario.py
+#python back/reconocer_usuario.py
 
 
-from flask import Flask, request, jsonify, render_template, session, redirect
-#comando para ejecutar el reconocimiento facial
-# C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
-# python back/reconocer_usuario.py
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from dotenv import load_dotenv
+
+# from flask import Flask, request, jsonify, render_template, session, redirect
 
 
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
@@ -23,6 +25,7 @@ import subprocess
 
 import tkinter as tk
 from tkinter import messagebox
+from blockchain.contrato import s_contrato, cuenta, w3  # Importar el contrato de votación
 
 # Configuración para generar PDFs
 
@@ -31,9 +34,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+
 from datetime import datetime
-
-
 # from reconocer_usuario import capturar_y_reconocer
 #from supabase import create_client
 
@@ -283,7 +286,86 @@ def voto_blanco():
 
 @app.route('/tu_voto')
 def tu_voto():
-    return render_template('tu_voto.html')
+    # Conectar a la base de datos
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    votos = {
+        'presidente': None,
+        'gobernador': None,
+        'intendente': None
+    }
+
+    # Obtener el presidente, gobernador e intendente del votante actual
+    if 'voto_actual' in session:
+        presidente = session['voto_actual']['presidente']
+        gobernador = session['voto_actual']['gobernador']
+        intendente = session['voto_actual']['intendente']
+
+        # Función auxiliar para obtener información del partido y candidato
+        def obtener_info_voto(id_partido, cargo):
+            if id_partido == 0:
+                return {'es_blanco': True}
+            
+            # Obtener información del partido y candidato
+            query = """
+                SELECT 
+                    p.nombre as nombre_partido,
+                    p.lista as lista,
+                    p.foto_presidentes as foto_presidente,
+                    p.foto_gobernadores as foto_gobernador,
+                    p.foto_intendente as foto_intendente,
+                    c.nombre,
+                    c.apellido,
+                    vc.nombre as nombre_vice,
+                    vc.apellido as apellido_vice
+                FROM partidos p
+                LEFT JOIN candidatos c ON 
+                    CASE 
+                        WHEN %s = 'presidente' THEN p.id_presidente = c.id_candidato
+                        WHEN %s = 'gobernador' THEN p.id_gobernador = c.id_candidato
+                        WHEN %s = 'intendente' THEN p.id_intendente = c.id_candidato
+                    END
+                LEFT JOIN candidatos vc ON
+                    CASE 
+                        WHEN %s = 'presidente' THEN p.id_vice_presidente = vc.id_candidato
+                        WHEN %s = 'gobernador' THEN p.id_vice_gobernador = vc.id_candidato
+                        WHEN %s = 'intendente' THEN NULL
+                    END
+                WHERE p.id_partidos = %s
+            """
+            cursor.execute(query, (cargo, cargo, cargo, cargo, cargo, cargo, id_partido))
+            resultado = cursor.fetchone()
+            
+            if resultado:
+                foto = None
+                if cargo == 'presidente':
+                    foto = resultado['foto_presidente']
+                elif cargo == 'gobernador':
+                    foto = resultado['foto_gobernador']
+                elif cargo == 'intendente':
+                    foto = resultado['foto_intendente']
+
+                return {
+                    'es_blanco': False,
+                    'partido': resultado['nombre_partido'],
+                    'lista': resultado['lista'],
+                    'candidato': f"{resultado['apellido']}, {resultado['nombre']}",
+                    'vice': f"{resultado['apellido_vice']}, {resultado['nombre_vice']}" if resultado['nombre_vice'] else None,
+                    'imagen': foto
+                }
+            return {'es_blanco': True}
+
+        # Obtener información para cada cargo
+        votos['presidente'] = obtener_info_voto(presidente, 'presidente')
+        votos['gobernador'] = obtener_info_voto(gobernador, 'gobernador')
+        votos['intendente'] = obtener_info_voto(intendente, 'intendente')
+
+    # Cerrar la conexión
+    cursor.close()
+    conn.close()
+
+    return render_template('tu_voto.html', votos=votos)
 
 @app.route('/reconocimiento')
 def reconocimiento():
@@ -338,10 +420,13 @@ def guardar_voto_template():
     session['voto_actual']['gobernador'] = id_gobernador
     session['voto_actual']['intendente'] = id_intendente
 
+<<<<<<< HEAD
     # Guardar los votos en un archivo de texto
     with open('votos_guardados.txt', 'a', encoding='utf-8') as f:
         f.write(f"DNI: {session['voto_actual']['dni']}, Presidente: {id_presidente}, Gobernador: {id_gobernador}, Intendente: {id_intendente}\n")
 
+=======
+>>>>>>> e4c3f98003949c5cf6776e8ecad810db10cefec0
     return redirect('/tu_voto')
 
 # @app.route('/set_voto_test')
@@ -436,6 +521,103 @@ def obtener_dni():
     except Exception as e:
         print(f"Error al obtener DNI: {str(e)}")  # Log de error
         return jsonify({"error": "Error al obtener el DNI"}), 500
+
+
+@app.route('/guardar_voto')
+def guardar_voto():
+    if 'voto_actual' not in session:
+        return "No hay voto en la sesión."
+
+    voto = session['voto_actual']
+    presidente = voto['presidente']
+    gobernador = voto['gobernador']
+    intendente = voto['intendente']    
+
+    #Ejecutar la transacción
+    try:
+        #Guardar el voto en la blockchain
+        tx_hash = s_contrato.functions.guardarVoto(presidente, gobernador, intendente).transact({'from': cuenta})
+        tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+        #Obtener datos del bloque
+        bloque = w3.eth.get_block(tx_receipt.blockNumber)
+        timestamp = datetime.fromtimestamp(bloque.timestamp)
+
+        #Guardar metadatos del voto en la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        insert_query = """ 
+            INSERT INTO transacciones_blockchain (tx_hash, bloque_numero, direccion_emisora, timestamp)
+            VALUES(%s, %s, %s, %s)
+                
+        """
+        
+        values = (tx_hash.hex(), tx_receipt.blockNumber, cuenta, timestamp)
+        
+        cursor.execute(insert_query, values)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+
+
+        return f"Voto guardado en la blockchain. Hash de transacción: {tx_hash.hex()}"
+    except Exception as e:
+        return f"Error al guardar el voto en la blockchain. {str(e)}"
+
+@app.route('/ver_votos')
+def ver_votos():
+        
+    try:
+        total = s_contrato.functions.totalVotos().call()
+        lista_votos = []
+
+        for i in range(total):
+            presidente, gobernador, intendente = s_contrato.functions.obtenerVoto(i).call()
+            lista_votos.append({
+                'presidente': presidente,
+                'gobernador': gobernador,
+                'intendente': intendente
+            })
+        
+
+        #Obtener los metadatos de la BD
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) # dictionary=True para que devuelva cada fila como diccionario y no como tupla
+
+        cursor.execute("SELECT * FROM transacciones_blockchain ORDER BY id ASC")
+        transacciones = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        # Creo lista para poder mostrar todos los valores del bloque 
+        votos_completos = []
+        '''
+        La función min en el bucle for se utiliza para encontrar el valor mínimo entre 
+        las longitudes de las dos listas. 
+        Esto significa que si lista_votos tiene 5 elementos y transacciones tiene 3, min devolverá 3.
+        '''
+        for i in range(min(len(lista_votos), len(transacciones))): 
+            voto = lista_votos[i]
+            meta = transacciones[i] #meta de metadato
+            votos_completos.append({
+                'presidente': voto['presidente'],
+                'gobernador': voto['gobernador'],
+                'intendente': voto['intendente'],
+                'tx_hash': meta['tx_hash'],
+                'bloque_numero': meta['bloque_numero'],
+                'direccion_emisora': meta['direccion_emisora'],
+                'timeStamp': meta['timestamp'].strftime("%Y-%m-%d %H:%M:%S")
+            })
+
+        return jsonify(votos_completos)
+    
+    except Exception as e:
+        return f"Error al obtener los votos de la blockchain. {str(e)}"
+
+
 
 if __name__ == '__main__':
     print("Iniciando servidor Flask...")

@@ -1,6 +1,5 @@
-const bloque = artifacts.require("smartContract")
+const contratoVotacion = artifacts.require("Votacion")
 
 module.exports = function(deployer) {
-    deployer.deploy(bloque);
-}
-
+    deployer.deploy(contratoVotacion);
+};
