@@ -338,26 +338,9 @@ def guardar_voto_template():
     session['voto_actual']['gobernador'] = id_gobernador
     session['voto_actual']['intendente'] = id_intendente
 
-    # Guardar en la base de datos
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        # Actualizar la tabla de votantes para marcar que ya votó
-        dni = session['voto_actual']['dni']
-        cursor.execute("UPDATE votantes SET ha_votado = 1 WHERE dni = %s", (dni,))
-
-        # Insertar el voto en la tabla de votos (ajusta el nombre de la tabla y columnas según tu modelo)
-        cursor.execute(
-            "INSERT INTO votos (dni, id_partido_presidente, id_partido_gobernador, id_partido_intendente) VALUES (%s, %s, %s, %s)",
-            (dni, id_presidente, id_gobernador, id_intendente)
-        )
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        return f"Error al guardar el voto: {str(e)}", 500
+    # Guardar los votos en un archivo de texto
+    with open('votos_guardados.txt', 'a', encoding='utf-8') as f:
+        f.write(f"DNI: {session['voto_actual']['dni']}, Presidente: {id_presidente}, Gobernador: {id_gobernador}, Intendente: {id_intendente}\n")
 
     return redirect('/tu_voto')
 
