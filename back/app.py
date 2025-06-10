@@ -4,7 +4,9 @@
 # <<<<<<< HEAD
 # #comando para ejecutar el reconocimiento facia
 # #C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
-# # python back/reconocer_usuario.py
+# # C:\Users\flora\AppData\Local\Programs\Python\Python311\python.exe back/app.py
+
+#python back/reconocer_usuario.py
 
 
 
