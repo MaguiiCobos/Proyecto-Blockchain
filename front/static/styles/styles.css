@@ -285,7 +285,7 @@ input {
     max-width: 600px;
 }
 
-.video_container {
+
 .img-rec {
     position: relative;
     margin-top: 1.5vw;
@@ -293,7 +293,7 @@ input {
     width: 70vw;
 }
 
-.overlay {
+
 .contenedor_texto {
     display: flex;
     position: absolute;
