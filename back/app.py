@@ -24,6 +24,7 @@ from web3 import Web3
 import subprocess
 
 import tkinter as tk
+import tkinter.messagebox
 from tkinter import messagebox
 from blockchain.contrato import s_contrato, cuenta, w3  # Importar el contrato de votación
 
@@ -418,6 +419,13 @@ def confirmar_voto():
         cursor.close()
         conn.close()
         
+        #Llamar a función para guardar voto en blockchain
+        try:
+            guardar_voto()
+        except Exception as e:
+            return f"El error es: {str(e)}"
+        
+
         # Redirigir a la página de constancia
         return redirect(url_for('constancia'))
         
@@ -464,24 +472,6 @@ def guardar_voto_template():
     return redirect(url_for('tu_voto'))
 
 
-
-# @app.route('/set_voto_test')
-# def set_voto_test():
-#     session['voto_actual'] = {
-#         'presidente': 1,  # ID válido de partido
-#         'gobernador': 0,  # voto en blanco
-#         'intendente': 2   # otro ID de partido válido
-#     }
-#     return "Voto de prueba seteado en la sesión."
-
-@app.route('/set_voto_test')
-def set_voto_test():
-    session['voto_actual'] = {
-        'presidente': 1,  # ID válido de partido
-        'gobernador': 0,  # voto en blanco
-        'intendente': 2   # otro ID de partido válido
-    }
-    return "Voto de prueba seteado en la sesión."
 
 
 @app.route('/ver_sesion')
@@ -569,13 +559,13 @@ def guardar_voto_agrupacion():
             return 2
         elif valor == "UNIDOS":
             return 3
-        return None
+        return 0
+    
     id_partido = partido_a_id(partido)
-    session['voto_actual'] = {
-        'presidente': id_partido,
-        'gobernador': id_partido,
-        'intendente': id_partido
-    }
+    session['voto_actual']['presidente'] = id_partido
+    session['voto_actual']['gobernador'] = id_partido
+    session['voto_actual']['intendente'] = id_partido
+    session.modified = True
     print('Sesión después de guardar agrupación:', session['voto_actual'])
     return redirect('/tu_voto')
 
@@ -587,16 +577,17 @@ def guardar_voto_blanco():
     session.modified = True
     return redirect('/tu_voto')
 
-@app.route('/guardar_voto')
+
 def guardar_voto():
     if 'voto_actual' not in session:
         return "No hay voto en la sesión."
 
-    voto = session['voto_actual']
-    presidente = voto['presidente']
-    gobernador = voto['gobernador']
-    intendente = voto['intendente']    
+  
+    presidente = session['voto_actual']['presidente']
+    gobernador = session['voto_actual']['gobernador']
+    intendente = session['voto_actual']['intendente']   
 
+    
     #Ejecutar la transacción
     try:
         #Guardar el voto en la blockchain
