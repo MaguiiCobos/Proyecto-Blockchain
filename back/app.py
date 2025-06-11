@@ -390,7 +390,61 @@ def finalizar_votacion():
 
 @app.route('/resultados')
 def resultados():
-    return render_template('resultados.html')
+    def contar_votos():
+        resultados = {}
+        try:
+            # Contar los votos para cada cargo
+            total = s_contrato.functions.votosPorCandidato().call()
+
+            # Crear un diccionario para manipular los resultados mas facilmente
+            resultados = {
+                "contadorVotoBlanco": total[0],
+                "contadorPresidente1": total[1],
+                "contadorPresidente2": total[2],
+                "contadorPresidente3": total[3],
+                "contadorGobernador1": total[4],
+                "contadorGobernador2": total[5],
+                "contadorGobernador3": total[6],
+                "contadorIntendente1": total[7],
+                "contadorIntendente2": total[8],
+                "contadorIntendente3": total[9],
+                "contador": total[10]
+            }
+            # Calcular el porcentaje de votos para cada candidato
+            if resultados['contador'] == 0:
+                print("No se han registrado votos.")
+                return None
+            resultados['porcentajeVotoBlanco'] = (resultados['contadorVotoBlanco'] / resultados['contador']) * 100
+            resultados['porcentajePresidente1'] = (resultados['contadorPresidente1'] / resultados['contador']) * 100
+            resultados['porcentajePresidente2'] = (resultados['contadorPresidente2'] / resultados['contador']) * 100
+            resultados['porcentajePresidente3'] = (resultados['contadorPresidente3'] / resultados['contador']) * 100
+            resultados['porcentajeGobernador1'] = (resultados['contadorGobernador1'] / resultados['contador']) * 100
+            resultados['porcentajeGobernador2'] = (resultados['contadorGobernador2'] / resultados['contador']) * 100
+            resultados['porcentajeGobernador3'] = (resultados['contadorGobernador3'] / resultados['contador']) * 100
+            resultados['porcentajeIntendente1'] = (resultados['contadorIntendente1'] / resultados['contador']) * 100
+            resultados['porcentajeIntendente2'] = (resultados['contadorIntendente2'] / resultados['contador']) * 100
+            resultados['porcentajeIntendente3'] = (resultados['contadorIntendente3'] / resultados['contador']) * 100
+
+            # Determinar el ganador de cada cargo
+            resultados['ganadorPresidente'] = max(
+                ['contadorPresidente1', 'contadorPresidente2', 'contadorPresidente3'],
+                key=lambda x: resultados[x]
+            )
+            resultados['ganadorGobernador'] = max(
+                ['contadorGobernador1', 'contadorGobernador2', 'contadorGobernador3'],
+                key=lambda x: resultados[x]
+            )
+            resultados['ganadorIntendente'] = max(
+                ['contadorIntendente1', 'contadorIntendente2', 'contadorIntendente3'],
+                key=lambda x: resultados[x]
+            )
+        except Exception as e:
+            print(f"Error al contar los votos: {str(e)}")
+            return None
+    resultados = contar_votos()
+    if resultados is None:
+        return "Error al obtener los resultados de la blockchain.",500
+    return render_template('resultados.html', resultados=resultados)
 
 @app.route('/votacion_cat')
 def votacion_cat():
@@ -671,32 +725,7 @@ def ver_votos():
     
     except Exception as e:
         return f"Error al obtener los votos de la blockchain. {str(e)}"
-    
-@app.route('/contar_votos')
-def contar_votos():
-    try:
-        # Contar los votos para cada cargo
-        total = s_contrato.functions.votosPorCandidato().call()
 
-        # Crear un diccionario para manipular los resultados mas facilmente
-        resultados = {
-            "votoBlanco": total[0],
-            "contadorPresidente1": total[1],
-            "contadorPresidente2": total[2],
-            "contadorPresidente3": total[3],
-            "contadorGobernador1": total[4],
-            "contadorGobernador2": total[5],
-            "contadorGobernador3": total[6],
-            "contadorIntendente1": total[7],
-            "contadorIntendente2": total[8],
-            "contadorIntendente3": total[9],
-            "contador": total[10]
-        }
-
-        return jsonify(resultados)
-
-    except Exception as e:
-        return f"Error al contar los votos. {str(e)}"
 
 if __name__ == '__main__':
     print("Iniciando servidor Flask...")

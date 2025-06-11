@@ -20,26 +20,26 @@
                         <p class="titulo">307</p>
                         <p><strong>Cambio</strong></p>
                     </div>
-                    <div id="p_1" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="p_1" class="seccion_partido {% if resultados['ganadorPresidente'] == 'contadorPresidente1' %}ganador{% endif %}">
                         <p class="titulo">Presidente</p>
                         <p><strong>García, Marta</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="p_1_result">(10%) 1123421</p>
+                        <p id="p_1_result">({{ resultados['porcentajePresidente1'] }}%) {{ resultados['contadorPresidente1'] }}</p>
                     </div>
-                    <div id="p_2" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="p_2" class="seccion_partido">
                         <p class="titulo">Gobernador</p>
                         <p><strong>Lopez, Camila</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="p_2_result">(10%) 1123421</p>
+                        <p id="p_2_result">({{ resultados['porcentajePresidente2'] }}%) {{ resultados['contadorPresidente2'] }}</p>
                     </div>
-                    <div id="p_3" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="p_3" class="seccion_partido">
                         <p class="titulo">Intendente</p>
                         <p><strong>Lopez, Camila</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="p_3_result">(10%) 1123421</p>
+                        <p id="p_3_result">({{ resultados['porcentajePresidente3'] }}%) {{ resultados['contadorPresidente3'] }}</p>
                     </div>
                 </div>
                 <div class="resultados_partido border_bottom">
@@ -48,26 +48,26 @@
                         <p class="titulo">307</p>
                         <p><strong>Cambio</strong></p>
                     </div>
-                    <div id="g_1" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="g_1" class="seccion_partido">
                         <p class="titulo">Presidente</p>
                         <p><strong>García, Marta</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="g_1_result">(10%) 1123421</p>
+                        <p id="g_1_result">({{ resultados['porcentajeGobernador1'] }}%) {{ resultados['contadorGobernador1'] }}</p>
                     </div>
-                    <div id="g_2" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="g_2" class="seccion_partido">
                         <p class="titulo">Gobernador</p>
                         <p><strong>Lopez, Camila</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="g_2_result">(10%) 1123421</p>
+                        <p id="g_2_result">({{ resultados['porcentajeGobernador2'] }}%) {{ resultados['contadorGobernador2'] }}</p>
                     </div>
-                    <div id="g_3" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="g_3" class="seccion_partido">
                         <p class="titulo">Intendente</p>
                         <p><strong>Lopez, Camila</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="g_3_result">(10%) 1123421</p>
+                        <p id="g_3_result">({{ resultados['porcentajeGobernador3'] }}%) {{ resultados['contadorGobernador3'] }}</p>
                     </div>
                 </div>
                 <div class="resultados_partido border_bottom">
@@ -76,31 +76,31 @@
                         <p class="titulo">307</p>
                         <p><strong>Cambio</strong></p>
                     </div>
-                    <div id="i_1" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="i_1" class="seccion_partido">
                         <p class="titulo">Presidente</p>
                         <p><strong>García, Marta</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="i_1_result">(10%) 1123421</p>
+                        <p id="i_1_result">({{ resultados['porcentajeIntendente1'] }}%) {{ resultados['contadorIntendente1'] }}</p>
                     </div>
-                    <div id="i_2" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="i_2" class="seccion_partido">
                         <p class="titulo">Gobernador</p>
                         <p><strong>Lopez, Camila</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="i_1_result">(10%) 1123421</p>
+                        <p id="i_1_result">({{ resultados['porcentajeIntendente2'] }}%) {{ resultados['contadorIntendente2'] }}</p>
                     </div>
-                    <div id="i_3" class="seccion_partido"> <!-- "añadir clase ganador" si es el mas votado -->
+                    <div id="i_3" class="seccion_partido">
                         <p class="titulo">Intendente</p>
                         <p><strong>Lopez, Camila</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Cambio.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
-                        <p id="i_1_result">(10%) 1123421</p>
+                        <p id="i_1_result">({{ resultados['porcentajeIntendente3'] }}%) {{ resultados['contadorIntendente3'] }}</p>
                     </div>
                 </div>
                 <div id="b">
                     <h2>Votos en blanco:</h2>
-                    <p id="b_result">(10%) 2000000000</p>
+                    <p id="b_result">({{ resultados['porcentajeVotoBlanco'] }}%) {{ resultados['contadorVotoBlanco'] }}</p>
                 </div>
             </div>
         </div>
