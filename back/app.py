@@ -671,6 +671,32 @@ def ver_votos():
     
     except Exception as e:
         return f"Error al obtener los votos de la blockchain. {str(e)}"
+    
+@app.route('/contar_votos')
+def contar_votos():
+    try:
+        # Contar los votos para cada cargo
+        total = s_contrato.functions.votosPorCandidato().call()
+
+        # Crear un diccionario para manipular los resultados mas facilmente
+        resultados = {
+            "votoBlanco": total[0],
+            "contadorPresidente1": total[1],
+            "contadorPresidente2": total[2],
+            "contadorPresidente3": total[3],
+            "contadorGobernador1": total[4],
+            "contadorGobernador2": total[5],
+            "contadorGobernador3": total[6],
+            "contadorIntendente1": total[7],
+            "contadorIntendente2": total[8],
+            "contadorIntendente3": total[9],
+            "contador": total[10]
+        }
+
+        return jsonify(resultados)
+
+    except Exception as e:
+        return f"Error al contar los votos. {str(e)}"
 
 if __name__ == '__main__':
     print("Iniciando servidor Flask...")
