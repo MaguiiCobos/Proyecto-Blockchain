@@ -587,6 +587,49 @@ def guardar_voto_blanco():
     session.modified = True
     return redirect('/tu_voto')
 
+@app.route('/guardar_voto')
+def guardar_voto():
+    if 'voto_actual' not in session:
+        return "No hay voto en la sesión."
+
+    voto = session['voto_actual']
+    presidente = voto['presidente']
+    gobernador = voto['gobernador']
+    intendente = voto['intendente']    
+
+    #Ejecutar la transacción
+    try:
+        #Guardar el voto en la blockchain
+        tx_hash = s_contrato.functions.guardarVoto(presidente, gobernador, intendente).transact({'from': cuenta})
+        tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+        #Obtener datos del bloque
+        bloque = w3.eth.get_block(tx_receipt.blockNumber)
+        timestamp = datetime.fromtimestamp(bloque.timestamp)
+
+        #Guardar metadatos del voto en la base de datos
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        insert_query = """ 
+            INSERT INTO transacciones_blockchain (tx_hash, bloque_numero, direccion_emisora, timestamp)
+            VALUES(%s, %s, %s, %s)
+                
+        """
+        
+        values = (tx_hash.hex(), tx_receipt.blockNumber, cuenta, timestamp)
+        
+        cursor.execute(insert_query, values)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+
+
+        return f"Voto guardado en la blockchain. Hash de transacción: {tx_hash.hex()}"
+    except Exception as e:
+        return f"Error al guardar el voto en la blockchain. {str(e)}"
+
 @app.route('/ver_votos')
 def ver_votos():
         
