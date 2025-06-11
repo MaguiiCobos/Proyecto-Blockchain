@@ -51,7 +51,6 @@
                         <p><strong>Valor</strong></p>
                     </div>
                     <div id="p_2" class="seccion_partido {% if resultados['ganadorPresidente'] == 'contadorPresidente2' %}ganador{% endif %}">
-                        <p class="titulo">Presidente</p>
                         <p><strong>Castro, Juan</strong></p>
                         <p><strong>Gomez, Pablo</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Valor.png')}}" alt="IMGCAMBIO">
@@ -59,7 +58,6 @@
                         <p id="p_2_result">({{ resultados['porcentajePresidente2'] }}%) {{ resultados['contadorPresidente2'] }}</p>
                     </div>
                     <div id="g_2" class="seccion_partido {% if resultados['ganadorGobernador'] == 'contadorGobernador2' %}ganador{% endif %}">
-                        <p class="titulo">Gobernador</p>
                         <p><strong>Sánchez, Franco</strong></p>
                         <p><strong>Romero, Beatriz</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Valor_Gober.png')}}" alt="IMGCAMBIO">
@@ -67,7 +65,6 @@
                         <p id="g_2_result">({{ resultados['porcentajeGobernador2'] }}%) {{ resultados['contadorGobernador2'] }}</p>
                     </div>
                     <div id="i_2" class="seccion_partido {% if resultados['ganadorIntendente'] == 'contadorIntendente2' %}ganador{% endif %}">
-                        <p class="titulo">Intendente</p>
                         <p><strong>Martinez, Lucía</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Valor_Inten.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
@@ -81,7 +78,6 @@
                         <p><strong>Unidos</strong></p>
                     </div>
                     <div id="p_3" class="seccion_partido {% if resultados['ganadorPresidente'] == 'contadorPresidente3' %}ganador{% endif %}">
-                        <p class="titulo">Presidente</p>
                         <p><strong>Pérez, Analia</strong></p>
                         <p><strong>Mitre, Omar</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Unidos.png')}}" alt="IMGCAMBIO">
@@ -89,7 +85,6 @@
                         <p id="p_3_result">({{ resultados['porcentajePresidente3'] }}%) {{ resultados['contadorPresidente3'] }}</p>
                     </div>
                     <div id="g_3" class="seccion_partido {% if resultados['ganadorGobernador'] == 'contadorGobernador3' %}ganador{% endif %}">
-                        <p class="titulo">Gobernador</p>
                         <p><strong>Martinez, Tomás</strong></p>
                         <p><strong>Díaz, Eduardo</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Unidos_Gober.png')}}" alt="IMGCAMBIO">
@@ -97,7 +92,6 @@
                         <p id="g_3_result">({{ resultados['porcentajeGobernador3'] }}%) {{ resultados['contadorGobernador3'] }}</p>
                     </div>
                     <div id="i_3" class="seccion_partido {% if resultados['ganadorIntendente'] == 'contadorIntendente3' %}ganador{% endif %}">
-                        <p class="titulo">Intendente</p>
                         <p><strong>Gonzales, Martín</strong></p>
                         <img class="img_resultados" src="{{ url_for('static', filename='images/candidatos/Unidos_Inten.png')}}" alt="IMGCAMBIO">
                         <p><strong>VOTOS TOTALES:</strong></p>
