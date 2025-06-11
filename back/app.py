@@ -438,12 +438,16 @@ def resultados():
                 ['contadorIntendente1', 'contadorIntendente2', 'contadorIntendente3'],
                 key=lambda x: resultados[x]
             )
+            return resultados
         except Exception as e:
             print(f"Error al contar los votos: {str(e)}")
             return None
+        
     resultados = contar_votos()
+
     if resultados is None:
         return "Error al obtener los resultados de la blockchain.",500
+    
     return render_template('resultados.html', resultados=resultados)
 
 @app.route('/votacion_cat')
