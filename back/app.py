@@ -286,6 +286,7 @@ def voto_blanco():
 
 @app.route('/tu_voto')
 def tu_voto():
+    print('Contenido de la sesión al entrar a tu_voto:', session.get('voto_actual'))
     # Conectar a la base de datos
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor(dictionary=True)
@@ -305,7 +306,14 @@ def tu_voto():
         # Función auxiliar para obtener información del partido y candidato
         def obtener_info_voto(id_partido, cargo):
             if id_partido == 0:
-                return {'es_blanco': True}
+                return {
+                    'es_blanco': True,
+                    'partido': 'Voto en Blanco',
+                    'lista': 'Voto en Blanco',
+                    'candidato': 'Voto en Blanco',
+                    'vice': None,
+                    'imagen': 'voto_blanco.png'
+                }
             
             # Obtener información del partido y candidato
             query = """
@@ -420,15 +428,14 @@ def confirmar_voto():
 
 @app.route('/guardar_voto_template', methods=['POST'])
 def guardar_voto_template():
+    print('Datos recibidos en template:', request.form)
     # Obtener los votos del formulario
     voto_presidente = request.form.get('voto_presidente')
     voto_gobernador = request.form.get('voto_gobernador')
     voto_intendente = request.form.get('voto_intendente')
-
     # Si el usuario no tiene sesión activa, redirigir
     if 'voto_actual' not in session:
         return "Sesión no encontrada. Por favor, vuelva a ingresar su DNI.", 400
-
     # Mapear los valores a IDs de partido (ajusta según tu lógica)
     def partido_a_id(valor):
         if valor == "CAMBIO":
@@ -438,23 +445,25 @@ def guardar_voto_template():
         elif valor == "UNIDOS":
             return 3
         elif valor == "BLANCO":
-            return 99  # Usa el ID real del partido blanco
+            return 0  # Cambiado de 99 a 0 para voto en blanco
         return None
-
     id_presidente = partido_a_id(voto_presidente)
     id_gobernador = partido_a_id(voto_gobernador)
     id_intendente = partido_a_id(voto_intendente)
-
     # Actualizar la sesión
     session['voto_actual']['presidente'] = id_presidente
     session['voto_actual']['gobernador'] = id_gobernador
     session['voto_actual']['intendente'] = id_intendente
-
+    session.modified = True
+    print('Sesión después de guardar template:', session['voto_actual'])
+ 
     # Guardar los votos en un archivo de texto
     with open('votos_guardados.txt', 'a', encoding='utf-8') as f:
         f.write(f"DNI: {session['voto_actual']['dni']}, Presidente: {id_presidente}, Gobernador: {id_gobernador}, Intendente: {id_intendente}\n")
 
-    return redirect('/tu_voto')
+    return redirect(url_for('tu_voto'))
+
+
 
 # @app.route('/set_voto_test')
 # def set_voto_test():
@@ -549,49 +558,34 @@ def obtener_dni():
         print(f"Error al obtener DNI: {str(e)}")  # Log de error
         return jsonify({"error": "Error al obtener el DNI"}), 500
 
+@app.route('/guardar_voto_agrupacion', methods=['POST'])
+def guardar_voto_agrupacion():
+    print('Datos recibidos en agrupacion:', request.form)
+    partido = request.form['partido']
+    def partido_a_id(valor):
+        if valor == "CAMBIO":
+            return 1
+        elif valor == "VALOR":
+            return 2
+        elif valor == "UNIDOS":
+            return 3
+        return None
+    id_partido = partido_a_id(partido)
+    session['voto_actual'] = {
+        'presidente': id_partido,
+        'gobernador': id_partido,
+        'intendente': id_partido
+    }
+    print('Sesión después de guardar agrupación:', session['voto_actual'])
+    return redirect('/tu_voto')
 
-@app.route('/guardar_voto')
-def guardar_voto():
-    if 'voto_actual' not in session:
-        return "No hay voto en la sesión."
-
-    voto = session['voto_actual']
-    presidente = voto['presidente']
-    gobernador = voto['gobernador']
-    intendente = voto['intendente']    
-
-    #Ejecutar la transacción
-    try:
-        #Guardar el voto en la blockchain
-        tx_hash = s_contrato.functions.guardarVoto(presidente, gobernador, intendente).transact({'from': cuenta})
-        tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-
-        #Obtener datos del bloque
-        bloque = w3.eth.get_block(tx_receipt.blockNumber)
-        timestamp = datetime.fromtimestamp(bloque.timestamp)
-
-        #Guardar metadatos del voto en la base de datos
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
-        insert_query = """ 
-            INSERT INTO transacciones_blockchain (tx_hash, bloque_numero, direccion_emisora, timestamp)
-            VALUES(%s, %s, %s, %s)
-                
-        """
-        
-        values = (tx_hash.hex(), tx_receipt.blockNumber, cuenta, timestamp)
-        
-        cursor.execute(insert_query, values)
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-
-
-        return f"Voto guardado en la blockchain. Hash de transacción: {tx_hash.hex()}"
-    except Exception as e:
-        return f"Error al guardar el voto en la blockchain. {str(e)}"
+@app.route('/guardar_voto_blanco')
+def guardar_voto_blanco():
+    session['voto_actual']['presidente'] = 0
+    session['voto_actual']['gobernador'] = 0
+    session['voto_actual']['intendente'] = 0
+    session.modified = True
+    return redirect('/tu_voto')
 
 @app.route('/ver_votos')
 def ver_votos():
@@ -643,8 +637,6 @@ def ver_votos():
     
     except Exception as e:
         return f"Error al obtener los votos de la blockchain. {str(e)}"
-
-
 
 if __name__ == '__main__':
     print("Iniciando servidor Flask...")

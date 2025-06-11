@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Votar por Agrupación Política</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -10,96 +11,100 @@
 
 <body class="fondo_secundario">
   <div class="contenedor_img">
-    <img class="img_secundaria" src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="" />
+    <img class="img_secundaria"
+      src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="" />
   </div>
 
   <div class="contenedor_partidos with_cards">
     <h1>Votar por agrupación política</h1>
 
     <!-- CAMBIO -->
-    <label class="partido-opcion">
-      <input type="radio" name="partido" class="input-radio" />
-      <div class="tarjeta">
-        <div class="partido-encabezado">
-          <img src="{{ url_for('static', filename='images/candidatos/Cambio.png') }}" alt="cambio" />
-          <div class="partido-info">
-            <div class="seccion">
-              <p class="titulo">Presidente y vice</p>
-              <p><strong>García, Marta</strong><br><strong>Lopez, Camilo</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">Gobernador y vice</p>
-              <p><strong>Hernandez, Luz</strong><br><strong>Cruz, Abigail</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">Intendente</p>
-              <p><strong>Ramirez, Agustin</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">CAMBIO - 305</p>
+    <form method="POST" action="{{ url_for('guardar_voto_agrupacion') }}" style="margin-bottom: 20px;">
+      <input type="hidden" name="partido" value="CAMBIO">
+      <div class="partido-opcion" onclick="this.closest('form').submit();" style="cursor:pointer;">
+        <div class="tarjeta">
+          <div class="partido-encabezado">
+            <img src="{{ url_for('static', filename='images/candidatos/Cambio.png') }}" alt="cambio" />
+            <div class="partido-info">
+              <div class="seccion">
+                <p class="titulo">Presidente y vice</p>
+                <p><strong>García, Marta</strong><br><strong>Lopez, Camilo</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">Gobernador y vice</p>
+                <p><strong>Hernandez, Luz</strong><br><strong>Cruz, Abigail</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">Intendente</p>
+                <p><strong>Ramirez, Agustin</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">CAMBIO - 305</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </label>
+    </form>
 
     <!-- VALOR -->
-    <label class="partido-opcion">
-      <input type="radio" name="partido" class="input-radio" />
-      <div class="tarjeta">
-        <div class="partido-encabezado">
-          <img src="{{ url_for('static', filename='images/candidatos/Valor.png') }}" alt="valor" />
-          <div class="partido-info">
-            <div class="seccion">
-              <p class="titulo">Presidente y vice</p>
-              <p><strong>Catro, Juan</strong><br><strong>Gomez, Pablo</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">Gobernador y vice</p>
-              <p><strong>Sanchez, Franco</strong><br><strong>Romero, Beatriz</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">Intendente</p>
-              <p><strong>Martinez, Lucía</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">VALOR - 302</p>
+    <form method="POST" action="{{ url_for('guardar_voto_agrupacion') }}" style="margin-bottom: 20px;">
+      <input type="hidden" name="partido" value="VALOR">
+      <div class="partido-opcion" onclick="this.closest('form').submit();" style="cursor:pointer;">
+        <div class="tarjeta">
+          <div class="partido-encabezado">
+            <img src="{{ url_for('static', filename='images/candidatos/Valor.png') }}" alt="valor" />
+            <div class="partido-info">
+              <div class="seccion">
+                <p class="titulo">Presidente y vice</p>
+                <p><strong>Catro, Juan</strong><br><strong>Gomez, Pablo</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">Gobernador y vice</p>
+                <p><strong>Sanchez, Franco</strong><br><strong>Romero, Beatriz</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">Intendente</p>
+                <p><strong>Martinez, Lucía</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">VALOR - 302</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </label>
+    </form>
 
     <!-- UNIDOS -->
-    <label class="partido-opcion">
-      <input type="radio" name="partido" class="input-radio" />
-      <div class="tarjeta">
-        <div class="partido-encabezado">
-          <img src="{{ url_for('static', filename='images/candidatos/Unidos.png') }}" alt="unidos" />
-          <div class="partido-info">
-            <div class="seccion">
-              <p class="titulo">Presidente y vice</p>
-              <p><strong>Pérez, Analía</strong><br><strong>Mitre, Omar</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">Gobernador y vice</p>
-              <p><strong>Sanchez, Franco</strong><br><strong>Díaz, Eduardo</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">Intendente</p>
-              <p><strong>Gonzales, Martín</strong></p>
-            </div>
-            <div class="seccion">
-              <p class="titulo">UNIDOS - 307</p>
+    <form method="POST" action="{{ url_for('guardar_voto_agrupacion') }}">
+      <input type="hidden" name="partido" value="UNIDOS">
+      <div class="partido-opcion" onclick="this.closest('form').submit();" style="cursor:pointer;">
+        <div class="tarjeta">
+          <div class="partido-encabezado">
+            <img src="{{ url_for('static', filename='images/candidatos/Unidos.png') }}" alt="unidos" />
+            <div class="partido-info">
+              <div class="seccion">
+                <p class="titulo">Presidente y vice</p>
+                <p><strong>Pérez, Analía</strong><br><strong>Mitre, Omar</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">Gobernador y vice</p>
+                <p><strong>Sanchez, Franco</strong><br><strong>Díaz, Eduardo</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">Intendente</p>
+                <p><strong>Gonzales, Martín</strong></p>
+              </div>
+              <div class="seccion">
+                <p class="titulo">UNIDOS - 307</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </label>
-
-    <div class="contenedor_btn_votar">
-      <a class="btn_siguiente2" href="{{url_for('tu_voto')}}">Siguiente</a>
-    </div>
+    </form>
   </div>
 </body>
+
 </html>
