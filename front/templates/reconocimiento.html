@@ -13,25 +13,11 @@
     <div class="contenedor_img">
         <img class="img_primaria"
             src="{{ url_for('static', filename='images/candidatos/escudo_nacional_argentino.png') }}" alt="">
-
     </div>
 
-    <div class="contenedor_titulo">
+    <div class="contenedor_reconocimiento">
         <h1>Reconocimiento facial</h1>
-        <p class="texto_instruccion">Por favor, mire a la cámara y mantenga una expresión neutral</p>
-        <!-- <img class="img-rec" src="./image/imagen-reconocimiento.png" alt="imagen para el reconocimiento"> -->
-    </div>
-
-    <div class="contenedor_texto">
-        <div class="contenedor_btn_volver2">
-            <a class="btn_volver2" href="{{url_for('ingresar_dni')}}">Volver</a>
-        </div>
-
-        <div class="contenedor_texto_validar">
-            <a href="{{url_for('forma_voto')}}" class="link_texto_validar">
-                <p class="texto_validar">Estamos validando tu imagen...</p>
-            </a>
-        </div>
+        <p class="texto_instruccion">Toca el botón para capturar o presiona "C" para capturar</p>
     </div>
 
     <div class="contenedor_camara">
@@ -44,7 +30,12 @@
         <div class="contenedor_estado">
             <p id="estado_mensaje" class="estado_mensaje">Preparando cámara...</p>
         </div>
-        <button class="btn_capturar" id="capturar" disabled>Capturar</button>
+        <div class="contenedor_botones_reconocimiento">
+            <a class="btn_volver_rec" href="{{url_for('ingresar_dni')}}">
+                <i class="bi bi-arrow-left-circle-fill _rec"></i> Volver
+            </a>
+            <button class="btn_capturar" id="capturar" disabled>Capturar</button>
+        </div>
         <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
     </div>
 
